@@ -1,0 +1,14 @@
+Slime 
+Zombie level 1 sem poder magico
+Bat level 1 com pouca forca
+Snake level 2 
+Skeleton level 2
+Bear level 3
+Hobglobin level 3
+
+
+Ogre level 7
+Spirit level 8
+Dark Knight level 11
+Dragon level 10
+Demon level 15
