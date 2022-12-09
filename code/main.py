@@ -3,7 +3,7 @@ from settings import *
 from debug import debug
 import os
 
-#teste
+#teste5
 
 pygame.init()
 
