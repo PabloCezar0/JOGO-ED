@@ -74,7 +74,7 @@ def draw_panelEnemy():
 #Characters
 
 class Character():
-    def __init__(self, x, y, scale, name, max_hp, max_mp, strenght, agility, magic, hp_potions, mp_potions, level, frames):  
+    def __init__(self, x, y, scale, name, max_hp, max_mp, strenght, agility, magic, hp_potions, mp_potions, level, frames, weakness):  
         self.name = name #atributos
         self.max_hp = max_hp
         self.hp = max_hp
@@ -85,6 +85,7 @@ class Character():
         self.magic = magic
         self.hp_potions = hp_potions
         self.mp_potions = mp_potions
+        self.weakness = weakness #0 None - 1 Magic - 2 Fire - 3 Ice - 4 Lightning
         self.alive = True
         self.animation_list = [] #animando os frame
         self.update_time = pygame.time.get_ticks()
@@ -103,32 +104,29 @@ class Character():
             img = pygame.image.load(f'graphics/Characters/{self.name}/Attack/{i}.png').convert_alpha() 
             img = pygame.transform.scale(img, (img.get_width()*scale, img.get_height() * scale))
             temp_list.append(img)
-            self.animation_list.append(temp_list)
-            self.image = self.animation_list[self.action][self.frame_index]
+        self.animation_list.append(temp_list)
         #magic animation
         temp_list = []
         for i in range(frames): #pega quantos frames cada personagem tem e anima
             img = pygame.image.load(f'graphics/Characters/{self.name}/Magic/{i}.png').convert_alpha() 
             img = pygame.transform.scale(img, (img.get_width()*scale, img.get_height() * scale))
             temp_list.append(img)
-            self.animation_list.append(temp_list)
-            self.image = self.animation_list[self.action][self.frame_index]
+        self.animation_list.append(temp_list)
         #hurt animation
         temp_list = []
         for i in range(frames): #pega quantos frames cada personagem tem e anima
             img = pygame.image.load(f'graphics/Characters/{self.name}/Hurt/{i}.png').convert_alpha() 
             img = pygame.transform.scale(img, (img.get_width()*scale, img.get_height() * scale))
             temp_list.append(img)
-            self.animation_list.append(temp_list)
-            self.image = self.animation_list[self.action][self.frame_index]
+        self.animation_list.append(temp_list)
         #dead animation
         temp_list = []
         for i in range(frames): #pega quantos frames cada personagem tem e anima
             img = pygame.image.load(f'graphics/Characters/{self.name}/Dead/{i}.png').convert_alpha() 
             img = pygame.transform.scale(img, (img.get_width()*scale, img.get_height() * scale))
             temp_list.append(img)
-            self.animation_list.append(temp_list)  
-            self.image = self.animation_list[self.action][self.frame_index]
+        self.animation_list.append(temp_list)  
+        self.image = self.animation_list[self.action][self.frame_index]
         self.rect = self.image.get_rect()
         self.rect.center = (x,y)
         self.level = level
@@ -140,17 +138,29 @@ class Character():
             self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
         if self.frame_index >= len(self.animation_list[self.action]):
-            self.frame_index = 0
-            self.action = 0
-            self.update_time = pygame.time.get_ticks()
+            if self.action == 4:
+                self.frame_index = len(self.animation_list[self.action])-1
+            self.idle()
    
+    def idle(self):
+            self.action = 0
+            self.frame_index = 0
+            self.update_time = pygame.time.get_ticks()
+
 
 
     def draw(self):
         screen.blit(self.image, self.rect)
 
-
-
+    def hurt(self):
+            self.action = 3
+            self.frame_index = 0
+            self.update_time = pygame.time.get_ticks()
+        
+    def dead(self):
+            self.action = 4
+            self.frame_index = 0
+            self.update_time = pygame.time.get_ticks()
 
     def attack(self,target):
         rand = random.randint(0,50)
@@ -158,10 +168,16 @@ class Character():
             damage = self.strenght * 2
         else:
              damage = self.strenght
+        if target.weakness == 1:
+            damage = damage*3
         target.hp -= damage
+        target.hurt()
+        target.action = 3
         if target.hp < 1:#checa se ta morto ou nao
             target.hp = 0
             target.alive = False
+            target.dead()
+
         self.action = 1
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
@@ -173,9 +189,9 @@ class Character():
 
 
 
-Slime = Character(140,300,1,'Slime',100,100,10,10,10,2,2,1,8)
-Zombie1 = Character(700,300,5 ,'Zombie',50,0,10,5,0,0,0,1,7)
-Zombie2 = Character(500,300,5 ,'Zombie',50,0,10,5,0,0,0,1,7)
+Slime = Character(140,300,1,'Slime',100,100,10,10,10,2,2,1,8,0)
+Zombie1 = Character(700,300,5 ,'Zombie',50,0,10,5,0,0,0,1,7,1)
+Zombie2 = Character(500,300,5 ,'Zombie',50,0,10,5,0,0,0,1,7,1)
 
 
 enemy_list = []
@@ -220,7 +236,7 @@ while run:
     #player actions
     if Slime.alive == True:
         if current_fighter == 1:
-            if attack == True:
+            if attack == True and target.alive == True:
                 action_cd += 1
                 if action_cd >= action_wait:
                     #attack
@@ -242,6 +258,8 @@ while run:
                     current_fighter += 1
                     action_cd = 0
                     time.sleep(0.08)
+            else:
+                current_fighter += 1
 
 
     
