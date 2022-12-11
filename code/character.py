@@ -12,6 +12,7 @@ class Character():
         self.y = y
         self.start_x = x
         self.start_y = y
+        self.start_scale = scale
         self.max_hp = max_hp
         self.hp = max_hp
         self.max_mp = max_mp
@@ -97,8 +98,9 @@ class Character():
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks()
-        self.x = self.start_x
-        self.y = self.start_y
+        self.x = self.start_x 
+        self.y = self.start_y + 500
+        self.scale = self.start_scale
   
 
 
