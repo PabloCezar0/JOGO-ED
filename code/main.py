@@ -42,16 +42,18 @@ lightning_icon = pygame.image.load('graphics/Spells/Lightning.png').convert_alph
 active_fireball_icon = pygame.image.load('graphics/Spells/Fireball_A.png').convert_alpha()
 active_ice_icon = pygame.image.load('graphics/Spells/Ice_A.png').convert_alpha()
 active_lightning_icon = pygame.image.load('graphics/Spells/Lightning_A.png').convert_alpha()
-shield_icon = pygame.image.load('graphics/Icons/Shield.png').convert_alpha()
-active_shield_icon = pygame.image.load('graphics/Icons/Shield_Active.png').convert_alpha()
-
+victory_icon = pygame.image.load('graphics/Icons/Victory.png').convert_alpha()
+defeat_icon = pygame.image.load('graphics/Icons/Defeat.png').convert_alpha()
+restart_icon = pygame.image.load('graphics/Icons/Restart.png').convert_alpha()
+left_icon = pygame.image.load('graphics/Icons/Left.png').convert_alpha()
+right_icon = pygame.image.load('graphics/Icons/Right.png').convert_alpha()
 
 
 #variaveis para controlar os turnos e o combate
 current_fighter = 1 #lutador 1 protagonista
 total_fighters = 1 #quantidade de personagens no combate
 action_cd = 0
-action_wait = 20
+action_wait = 3000
 attack = False #variavel para controlar se ataque ja foir realizado os de baixo fazem o mesmo com magias e pocoes
 fire_magic = False
 ice_magic = False
@@ -127,11 +129,11 @@ lightning_button = buttons.Button(screen, 230,455, lightning_icon, 45, 45)
 
 
 
-while run == True and game_win == 0:
+while run == True:
     clock.tick(FPS) #limita o fps para o colocado em settings
     
 
-    while level_over == 0 and run == True:
+    while game_win == 0 and run == True:
         draw_bg() #mostra background na tela
         draw_panelSlime() #mostra o painel do pc
         #Gerar personagens
@@ -154,6 +156,9 @@ while run == True and game_win == 0:
         potion = False
         taget = None
 
+        if current_fighter == 1:
+            action_wait = 0
+
     
         pygame.mouse.set_visible(True)#mostra o mouse normal apos ataque
 
@@ -161,86 +166,88 @@ while run == True and game_win == 0:
 
             
     #todos fazem a mesma coisa, ao clicar em algum botao de ataque e colocar o mouse em cima do inimigo o cursos muda para o do icone de ataque ativo selecionado
-        for i, enemy in enumerate(enemy_list):
+        for i, enemy in enumerate(enemy_list):  
 
-            if sword_button.clicked == True:
-                fireball_button.clicked = False
-                ice_button.clicked = False
-                lightning_button.clicked = False
-                sword_button.image = active_attack_icon
-                if enemy.rect.collidepoint(pos):
-                    pygame.mouse.set_visible(False)
-                    screen.blit(active_attack_icon, pos)
-                    if clicked == True:
-                        attack = True
-                        target = enemy_list[i]
+            if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
+                if sword_button.clicked == True:
+                    fireball_button.clicked = False
+                    ice_button.clicked = False
+                    lightning_button.clicked = False
+                    sword_button.image = active_attack_icon
+                    if enemy.rect.collidepoint(pos):
+                        pygame.mouse.set_visible(False)
+                        screen.blit(active_attack_icon, pos)
+                        if clicked == True:
+                            attack = True
+                            target = enemy_list[i]
 
-            if fireball_button.clicked == True:
-                ice_button.clicked = False
-                lightning_button.clicked = False
-                sword_button.clicked = False
-                fireball_button.image = active_fireball_icon
-                if enemy.rect.collidepoint(pos):
-                    pygame.mouse.set_visible(False)
-                    screen.blit(active_fireball_icon, pos)
-                    if clicked == True:
-                        fire_magic = True
-                        target = enemy_list[i]
-    
-            if ice_button.clicked == True:
-                sword_button.clicked = False
-                fireball_button.clicked = False
-                lightning_button.clicked = False
-                ice_button.image = active_ice_icon
-                if enemy.rect.collidepoint(pos):
-                    pygame.mouse.set_visible(False)
-                    screen.blit(active_ice_icon, pos)
-                    if clicked == True:
-                        ice_magic = True
-                        target = enemy_list[i]
+                if fireball_button.clicked == True:
+                    ice_button.clicked = False
+                    lightning_button.clicked = False
+                    sword_button.clicked = False
+                    fireball_button.image = active_fireball_icon
+                    if enemy.rect.collidepoint(pos):
+                        pygame.mouse.set_visible(False)
+                        screen.blit(active_fireball_icon, pos)
+                        if clicked == True:
+                            fire_magic = True
+                            target = enemy_list[i]
+        
+                if ice_button.clicked == True:
+                    sword_button.clicked = False
+                    fireball_button.clicked = False
+                    lightning_button.clicked = False
+                    ice_button.image = active_ice_icon
+                    if enemy.rect.collidepoint(pos):
+                        pygame.mouse.set_visible(False)
+                        screen.blit(active_ice_icon, pos)
+                        if clicked == True:
+                            ice_magic = True
+                            target = enemy_list[i]
 
-            if lightning_button.clicked == True:
-                sword_button.clicked = False
-                fireball_button.clicked = False
-                ice_button.clicked = False
-                lightning_button.image = active_lightning_icon
-                if enemy.rect.collidepoint(pos):
-                    pygame.mouse.set_visible(False)
-                    screen.blit(active_lightning_icon, pos)
-                    if clicked == True:
-                        lightning_magic = True
-                        target = enemy_list[i]
+                if lightning_button.clicked == True:
+                    sword_button.clicked = False
+                    fireball_button.clicked = False
+                    ice_button.clicked = False
+                    lightning_button.image = active_lightning_icon
+                    if enemy.rect.collidepoint(pos):
+                        pygame.mouse.set_visible(False)
+                        screen.blit(active_lightning_icon, pos)
+                        if clicked == True:
+                            lightning_magic = True
+                            target = enemy_list[i]
 
 
-            if potion_button.clicked == True and potion == False and Slime.hp_potions > 0: #controla as pocoes, impede o usuario de usar pocao com hp maximo e impede o hp com a cura passar do hp maximo
-                if Slime.hp <= 50:    
-                    Slime.hp += 50
-                    potion = True
-                    Slime.hp_potions -= 1
-                if Slime.hp == Slime.max_hp:
-                    potion = True
-                if Slime.hp > 50 and Slime.hp != 100:
-                    Slime.hp += Slime.max_hp - Slime.hp
-                    potion = True
-                    Slime.hp_potions -= 1
-                potion_button.clicked = False
+                if potion_button.clicked == True and potion == False and Slime.hp_potions > 0: #controla as pocoes, impede o usuario de usar pocao com hp maximo e impede o hp com a cura passar do hp maximo
+                    if Slime.hp <= 50:    
+                        Slime.hp += 50
+                        potion = True
+                        Slime.hp_potions -= 1
+                    if Slime.hp == Slime.max_hp:
+                        potion = True
+                    if Slime.hp > 50 and Slime.hp != 100:
+                        Slime.hp += Slime.max_hp - Slime.hp
+                        potion = True
+                        Slime.hp_potions -= 1
+                    potion_button.clicked = False
 
-            if mp_button.clicked == True and potion == False and Slime.mp_potions > 0:#controla as pocoes, impede o usuario de usar pocao com mp maximo e impede o hp com a cura passar do mp maximo
-                if Slime.mp <= 50:    
-                    Slime.mp += 50
-                    potion = True
-                    Slime.mp_potions -= 1
-                if Slime.mp == Slime.max_mp:
-                    potion = True
-                if Slime.mp > 50 and Slime.mp != 100:
-                    Slime.mp += Slime.max_mp - Slime.mp
-                    potion = True
-                    Slime.mp_potions -= 1
-                mp_button.clicked = False
+                if mp_button.clicked == True and potion == False and Slime.mp_potions > 0:#controla as pocoes, impede o usuario de usar pocao com mp maximo e impede o hp com a cura passar do mp maximo
+                    if Slime.mp <= 50:    
+                        Slime.mp += 50
+                        potion = True
+                        Slime.mp_potions -= 1
+                    if Slime.mp == Slime.max_mp:
+                        potion = True
+                    if Slime.mp > 50 and Slime.mp != 100:
+                        Slime.mp += Slime.max_mp - Slime.mp
+                        potion = True
+                        Slime.mp_potions -= 1
+                    mp_button.clicked = False
                     
-            if game_win == 0: # se o jogo nao tiver ganho roda o codigo abaixo
+        
             #acao do jogador se o slime tiver vivo ele comeca fighter 1 eh slime 2 eh o inimigo 1 e o 3 inimigo 2
                 if Slime.alive == True:
+
                     if current_fighter == 1:
 
                         if attack == True and target.alive == True: #controla o ataque fisico
@@ -255,6 +262,7 @@ while run == True and game_win == 0:
                                     potion = False
                                     potion_button.clicked = False
                                     mp_button.clicked = False
+                                    action_wait = 3000
 
                         if fire_magic == True and target.alive == True: #controla o ataque de fogo
                             action_cd += 1
@@ -269,6 +277,7 @@ while run == True and game_win == 0:
                                     potion_button.clicked = False
                                     mp_button.clicked = False
                                     fire_magic = False
+                                    action_wait = 3000
 
                         if ice_magic == True and target.alive == True: #controla o ataque de gelo
                             action_cd += 1
@@ -283,6 +292,7 @@ while run == True and game_win == 0:
                                     potion_button.clicked = False
                                     mp_button.clicked = False
                                     ice_magic = False
+                                    action_wait = 3000
 
                         if lightning_magic == True and target.alive == True: #controla o ataque de raio
                             action_cd += 1
@@ -297,18 +307,10 @@ while run == True and game_win == 0:
                                     potion_button.clicked = False
                                     mp_button.clicked = False
                                     lightning_magic = False
+                                    action_wait = 2000
                                     
-                                    
-                else: #morreu, game over
-                    game_win = -1
-                    sword_button.clicked = False
-                    potion_button.clicked = False
-                    mp_button.clicked = False
-                    fireball_button.clicked = False
-                    ice_button.clicked = False
-                    lightning_button.clicked = False
-
-
+                else: 
+                    level_over = -1
                 for count, enemy in enumerate(enemy_list): #controla o ataque do inimigo o target sempre eh o slime
                     if current_fighter == 2 + count:
                         if enemy.alive == True:
@@ -345,6 +347,16 @@ while run == True and game_win == 0:
 
         if enemy_alive == 0:
             level_over = 1
+        
+        if level_over != 0:
+            if level_over == 1:
+                screen.blit(victory_icon, (250,0))
+                screen.blit(left_icon, (200,100))
+                screen.blit(right_icon, (500,100))
+            if level_over == -1:
+                screen.blit(defeat_icon, (250,0))
+                screen.blit(restart_icon, (300,100))
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -355,7 +367,7 @@ while run == True and game_win == 0:
                 clicked = False
         pygame.display.update()  
 
-    while level_over == 1:
+    while game_win == 1:
         draw_win()
         pygame.display.update() 
 
