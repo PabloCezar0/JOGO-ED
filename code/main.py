@@ -20,13 +20,13 @@ pygame.display.set_caption('Slime Combat II') #Muda o nome da janela do jogo
 
 run = True #necssario para o pygame
 
-background_img = pygame.image.load('graphics/background/Background.png').convert_alpha() #coloca um background
+background_img = pygame.image.load('graphics/Background/background.png').convert_alpha() #coloca um background
 
 slime_panel_img = pygame.image.load('graphics/Icons/SlimeStatusBar.png').convert_alpha() #barrinha embaixo do background, onde fica a vida e mana para o protagonista
 
 enemy_panel_img = pygame.image.load('graphics/Icons/EnemyStatusBar.png').convert_alpha() #barrinha embaixo do background, onde fica a vida e mana para inimigos
 
-win_screen = pygame.image.load('graphics/background/Win.png').convert_alpha()#tela de vitoria com os scores
+win_screen = pygame.image.load('graphics/Background/Win.png').convert_alpha()#tela de vitoria com os scores
 
 
 #icones nomes explicam para que cada um serve
