@@ -100,6 +100,7 @@ class Character():
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
 
+
     def attack(self,target):
         rand = random.randint(0,50)
         if rand >= 40:
