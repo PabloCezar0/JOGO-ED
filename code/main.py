@@ -4,6 +4,7 @@ from debug import debug
 import time
 import character
 import buttons
+from fila import Queue
 
 
 
@@ -21,7 +22,7 @@ pygame.display.set_caption('Slime Combat II') #Muda o nome da janela do jogo
 
 run = True #necssario para o pygame
 
-background_img = pygame.image.load('graphics/Background/Background.png').convert_alpha() #coloca um background
+background_img = pygame.image.load('graphics/Background/background.png').convert_alpha() #coloca um background
 
 slime_panel_img = pygame.image.load('graphics/Icons/SlimeStatusBar.png').convert_alpha() #barrinha embaixo do background, onde fica a vida e mana para o protagonista
 
@@ -117,14 +118,17 @@ Skelleton2 = character.Character(500,360,5 ,'Skelleton',50,0,5,0,3,50,1,0,0,1,18
 
 
 #coloca os inimigos em uma lista 
-enemy_list = []
+enemy_list = Queue()
 enemy_alive = 0
-enemy_list.append(Skelleton1)
+enemy_list.enqueue(Skelleton1)
 enemy_alive += 1
 total_fighters +=1
-enemy_list.append(Zombie2)
+enemy_list.enqueue(Zombie2)
 enemy_alive += 1
 total_fighters +=1
+
+print(enemy_list)
+
 
 
 

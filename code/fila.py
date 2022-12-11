@@ -1,15 +1,15 @@
 class Node:
-    def __init__(self, dado):
-        self.dado = dado
+    def __init__(self, data):
+        self.data = data
         self.prox = None
 
-class Fila:
+class Queue:
     def __init__(self):
         self.head = None
         self.tail = None
 
-    def enqueue(self, dado):
-        no = Node(dado)
+    def enqueue(self, data):
+        no = Node(data)
 
         if self.head is None:
             self.head = no
@@ -25,7 +25,7 @@ class Fila:
             print("Fila vazia!")
             return
         else:
-            aux = self.head.dado
+            aux = self.head.data
             self.head = self.head.prox
             return aux
     
@@ -36,6 +36,6 @@ class Fila:
         prim = ''
         aux = self.head
         while aux:
-            prim += str(aux.dado) + '-> '
+            prim += str(aux.data.name) + '-> '
             aux = aux.prox
         return prim

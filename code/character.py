@@ -5,7 +5,7 @@ from settings import *
 
 screen = pygame.display.set_mode((WIDHT, HEIGHT))
 
-class Character():
+class Character:
     def __init__(self, x, y, scale, name, max_hp, max_mp, strenght, agility, magic, defense, magic_defense, hp_potions, mp_potions, level, frames, weakness):  
         self.name = name #atributos
         self.x = x
