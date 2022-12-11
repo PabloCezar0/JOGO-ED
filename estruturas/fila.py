@@ -7,6 +7,7 @@ class Queue:
     def __init__(self):
         self.head = None
         self.tail = None
+        self.index = 0
 
     def enqueue(self, data):
         newNode = Node(data)
@@ -18,7 +19,7 @@ class Queue:
         else:
             self.tail.next = newNode
             self.tail = newNode
-            
+        self.index += 1
 
     def dequeue(self):
         if self.head is None:
@@ -27,6 +28,7 @@ class Queue:
         else:
             aux = self.head.data
             self.head = self.head.next
+            self.index -=1
             return aux
     
     def __str__(self):

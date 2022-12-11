@@ -1,24 +1,25 @@
 class Node:
     def __init__(self, data):
         self.data = data
-        self.prox = None
+        self.next = None
 
 class Queue:
     def __init__(self):
         self.head = None
         self.tail = None
+        self.index = 0
 
     def enqueue(self, data):
-        no = Node(data)
+        newNode = Node(data)
 
         if self.head is None:
-            self.head = no
+            self.head = newNode
         if self.tail is None:
-            self.tail = no
+            self.tail = newNode
         else:
-            self.tail.prox = no
-            self.tail = no
-            
+            self.tail.next = newNode
+            self.tail = newNode
+        self.index += 1
 
     def dequeue(self):
         if self.head is None:
@@ -26,7 +27,8 @@ class Queue:
             return
         else:
             aux = self.head.data
-            self.head = self.head.prox
+            self.head = self.head.next
+            self.index -=1
             return aux
     
     def __str__(self):
@@ -36,6 +38,6 @@ class Queue:
         prim = ''
         aux = self.head
         while aux:
-            prim += str(aux.data.name) + '-> '
-            aux = aux.prox
+            prim += str(aux.data.nome) + '-> '
+            aux = aux.next
         return prim

@@ -100,9 +100,9 @@ def draw_panelSlime():
         drawn_text(f'{Slime.mp_potions}', font, blue, 80, 580)
 
 #painel com vida e mana dos inimigos
-def draw_panelEnemy():
+def draw_panelEnemy(aux):
         screen.blit(enemy_panel_img, (450,450))
-        for count, i in enumerate(enemy_list):
+        for count, i in enumerate(aux):
             drawn_text(f'{i.name} HP: {i.hp} {count}', font, red, 550 , 450 + 80*count )
             drawn_text(f'{i.name} MP: {i.mp}', font, blue, 550, 480 + 80*count )
 
@@ -126,12 +126,6 @@ total_fighters +=1
 enemy_list.enqueue(Zombie2)
 enemy_alive += 1
 total_fighters +=1
-
-print(enemy_list)
-
-
-
-
     
 
 #criar botoes para pressionar
@@ -163,10 +157,17 @@ while run == True:
         ice_button.draw()
         mp_button.draw()
         lightning_button.draw()
-        for Enemy in enemy_list:
+        
+        percorreFila = enemy_list.head
+        aux = []
+        while percorreFila:
+            aux.insert(0, percorreFila.data)
+            percorreFila = percorreFila.next
+        
+        for Enemy in aux:
             Enemy.draw()
             Enemy.update()
-            draw_panelEnemy()
+            draw_panelEnemy(aux)
 
         #controlar o ataque
         attack = False
@@ -183,8 +184,8 @@ while run == True:
         pos = pygame.mouse.get_pos()#pega a posicao do mosue e coloca em pos
 
             
-    #todos fazem a mesma coisa, ao clicar em algum botao de ataque e colocar o mouse em cima do inimigo o cursos muda para o do icone de ataque ativo selecionado
-        for i, enemy in enumerate(enemy_list):  
+    # todos fazem a mesma coisa, ao clicar em algum botao de ataque e colocar o mouse em cima do inimigo o cursos muda para o do icone de ataque ativo selecionado
+        for i, enemy in enumerate(aux):  
 
             if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
                 if current_fighter == 1:
@@ -369,7 +370,7 @@ while run == True:
 
     
                     
-                for count, enemy in enumerate(enemy_list): #controla o ataque do inimigo o target sempre eh o slime
+                for count, enemy in enumerate(aux): #controla o ataque do inimigo o target sempre eh o slime
                     if current_fighter == 2 + count:
                         if enemy.alive == True:
                             action_cd += 1
