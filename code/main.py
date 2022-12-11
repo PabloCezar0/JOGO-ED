@@ -6,6 +6,7 @@ import character
 import buttons
 
 
+
 #teste5
 
 pygame.init()
@@ -20,13 +21,13 @@ pygame.display.set_caption('Slime Combat II') #Muda o nome da janela do jogo
 
 run = True #necssario para o pygame
 
-background_img = pygame.image.load('graphics/background/Background.png').convert_alpha() #coloca um background
+background_img = pygame.image.load('graphics/Background/Background.png').convert_alpha() #coloca um background
 
 slime_panel_img = pygame.image.load('graphics/Icons/SlimeStatusBar.png').convert_alpha() #barrinha embaixo do background, onde fica a vida e mana para o protagonista
 
 enemy_panel_img = pygame.image.load('graphics/Icons/EnemyStatusBar.png').convert_alpha() #barrinha embaixo do background, onde fica a vida e mana para inimigos
 
-win_screen = pygame.image.load('graphics/background/Win.png').convert_alpha()#tela de vitoria com os scores
+win_screen = pygame.image.load('graphics/Background/Win.png').convert_alpha()#tela de vitoria com os scores
 
 
 #icones nomes explicam para que cada um serve
@@ -113,14 +114,21 @@ Skelleton1 = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,50,1,0,0,1,1
 Skelleton2 = character.Character(500,360,5 ,'Skelleton',50,0,5,0,3,50,1,0,0,1,18,1)
 
 
+
+
 #coloca os inimigos em uma lista 
 enemy_list = []
 enemy_alive = 0
 enemy_list.append(Skelleton1)
+enemy_alive += 1
 total_fighters +=1
 enemy_list.append(Zombie2)
+enemy_alive += 1
 total_fighters +=1
 
+
+
+    
 
 #criar botoes para pressionar
 sword_button = buttons.Button(screen, 25,460, attack_icon, 50, 50)
@@ -177,6 +185,8 @@ while run == True:
             if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
                 if current_fighter == 1:
                     if sword_button.clicked == True:
+                        if fireball_button.clicked == True or lightning_button.clicked == True or ice_button.clicked == True:
+                            sword_button.clicked = False
                         fireball_button.clicked = False
                         ice_button.clicked = False
                         lightning_button.clicked = False
@@ -189,6 +199,8 @@ while run == True:
                                 target = enemy_list[i]
 
                     if fireball_button.clicked == True:
+                        if ice_button.clicked == True or lightning_button.clicked == True:
+                            fireball_button.clicked = False
                         ice_button.clicked = False
                         lightning_button.clicked = False
                         sword_button.clicked = False
@@ -201,6 +213,8 @@ while run == True:
                                 target = enemy_list[i]
             
                     if ice_button.clicked == True:
+                        if lightning_button.clicked == True:
+                            ice_button.clicked = False
                         sword_button.clicked = False
                         fireball_button.clicked = False
                         lightning_button.clicked = False
@@ -230,16 +244,6 @@ while run == True:
                     if Slime.hp == Slime.max_hp and potion == False:
                         potion = True
                         drawn_text('Health Full', font, red, 240, 230)
-
-                    if Slime.hp <= 50 and potion == False:
-                        if Slime.hp_potions == 1:
-                            Slime.hp_potions = 0
-                        drawn_text('+50', font, red, 240, 250)    
-                        Slime.hp += 50
-                        potion = True
-                        if Slime.hp_potions == 2:
-                            Slime.hp_potions = 1
-                        
                     
                     if Slime.hp > 50 and Slime.hp != Slime.max_hp and potion == False:
                         Slime.hp += Slime.max_hp - Slime.hp
@@ -247,6 +251,16 @@ while run == True:
                         drawn_text('{heal}', font, red, 240, 250)
                         potion = True
                         Slime.hp_potions -= 1
+
+                    if Slime.hp <= 50 and potion == False:
+                        drawn_text('+50', font, red, 240, 250)    
+                        Slime.hp += 50
+                        potion = True
+                        potion -= 1
+                    
+                        
+                    
+                    
 
                     potion_button.clicked = False
 
@@ -367,10 +381,8 @@ while run == True:
                 #reseta o turno para o protagonista
                 if current_fighter > total_fighters :
                     current_fighter = 1
-                for enemy in enemy_list:
-                    if enemy.alive == True:
-                        enemy_alive += 1
-                    if enemy.alive == False:
+
+                if enemy.alive == False in enemy_list:
                         enemy_alive -= 1
 
                 if enemy_alive == 0:
