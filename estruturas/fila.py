@@ -1,7 +1,3 @@
-class Character():
-    def __init__(self, nome):
-        self.nome = nome
-
 class Node:
     def __init__(self, data):
         self.data = data
@@ -43,20 +39,3 @@ class Queue:
             prim += str(aux.data.nome) + '-> '
             aux = aux.next
         return prim
-
-if __name__ == "__main__":
-    fila = Queue()
-
-    skelet = Character('skeleton')
-    zom = Character('zombie')
-
-    fila.enqueue(skelet)
-    fila.enqueue(zom)
-
-    print(fila)
-    print(fila.head.data.nome)
-
-    fila.dequeue()
-
-    print(fila)
-    print(fila.head.data.nome)
