@@ -6,7 +6,7 @@ from settings import *
 screen = pygame.display.set_mode((WIDHT, HEIGHT))
 
 class Character():
-    def __init__(self, x, y, scale, name, max_hp, max_mp, strenght, agility, magic, hp_potions, mp_potions, level, frames, weakness):  
+    def __init__(self, x, y, scale, name, max_hp, max_mp, strenght, agility, magic, defense, magic_defense, hp_potions, mp_potions, level, frames, weakness):  
         self.name = name #atributos
         self.x = x
         self.y = y
@@ -17,9 +17,11 @@ class Character():
         self.strenght = strenght
         self.agility = agility
         self.magic = magic
+        self.defense = defense
+        self.magic_defense = magic_defense
         self.hp_potions = hp_potions
         self.mp_potions = mp_potions
-        self.weakness = weakness #0 None - 1 Magic - 2 Fire - 3 Ice - 4 Lightning
+        self.weakness = weakness #0 None - 1 Physical  - 2  Magic -  3 Fire - 4 Ice - 5 Lightning
         self.alive = True
         self.animation_list = [] #animando os frame
         self.update_time = pygame.time.get_ticks()
@@ -106,7 +108,30 @@ class Character():
              damage = self.strenght
         if target.weakness == 1:
             damage = damage*3
-        target.hp -= damage
+        if damage - target.defense > 0:
+            target.hp -= damage - target.defense 
+        target.hurt()
+        target.action = 3
+        if target.hp < 1:#checa se ta morto ou nao
+            target.hp = 0
+            target.alive = False
+            target.dead()
+
+        self.action = 1
+        self.frame_index = 0
+        self.update_time = pygame.time.get_ticks()
+
+    def fire(self,target):
+        self.mp -= 15
+        rand = random.randint(0,50)
+        if rand >= 40:
+            damage = self.magic * 5
+        else:
+             damage = self.magic * 2
+        if target.weakness == 2 or target.weakness == 3:
+            damage = damage*3
+        if damage - target.magic_defense > 0:
+            target.hp -= damage - target.magic_defense
         target.hurt()
         target.action = 3
         if target.hp < 1:#checa se ta morto ou nao
@@ -118,3 +143,49 @@ class Character():
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
         
+    def ice(self,target):
+        self.mp -= 15
+        rand = random.randint(0,50)
+        if rand >= 40:
+            damage = self.magic * 3
+        else: 
+             damage = self.magic * 2
+        if target.weakness == 2 or target.weakness == 4:
+            damage = damage*2
+            target.agility -= 2
+        if damage - target.magic_defense > 0:
+            target.hp -= damage - target.magic_defense 
+        target.hurt()
+        target.action = 3
+        if target.hp < 1:#checa se ta morto ou nao
+            target.hp = 0
+            target.alive = False
+            target.dead()
+
+        self.action = 1
+        self.frame_index = 0
+        self.update_time = pygame.time.get_ticks()
+
+    def lightning(self,target):
+        self.mp -= 15
+        rand = random.randint(0,50)
+        if rand >= 40:
+            damage = self.magic * 3
+        else: 
+             damage = self.magic * 2
+        if target.weakness == 2 or target.weakness == 5:
+            damage = damage*2
+            target.strenght -= 2
+        if damage - target.magic_defense > 0:
+            target.hp -= damage - target.magic_defense 
+        target.hurt()
+        target.action = 3
+        if target.hp < 1:#checa se ta morto ou nao
+            target.hp = 0
+            target.alive = False
+            target.dead()
+
+        self.action = 1
+        self.frame_index = 0
+        self.update_time = pygame.time.get_ticks()
+
