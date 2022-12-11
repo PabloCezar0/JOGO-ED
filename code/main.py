@@ -232,10 +232,14 @@ while run == True:
                         drawn_text('Health Full', font, red, 240, 230)
 
                     if Slime.hp <= 50 and potion == False:
+                        if Slime.hp_potions == 1:
+                            Slime.hp_potions = 0
                         drawn_text('+50', font, red, 240, 250)    
                         Slime.hp += 50
                         potion = True
-                        Slime.hp_potions -= 1
+                        if Slime.hp_potions == 2:
+                            Slime.hp_potions = 1
+                        
                     
                     if Slime.hp > 50 and Slime.hp != Slime.max_hp and potion == False:
                         Slime.hp += Slime.max_hp - Slime.hp
@@ -434,5 +438,3 @@ while run == True:
         pygame.display.update() 
 
 pygame.quit()
-
-
