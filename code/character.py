@@ -10,12 +10,18 @@ class Character():
         self.name = name #atributos
         self.x = x
         self.y = y
+        self.start_x = x
+        self.start_y = y
         self.max_hp = max_hp
         self.hp = max_hp
         self.max_mp = max_mp
         self.mp = max_mp
+        self.max_hp_potion = hp_potions
+        self.max_mp_potion = mp_potions
         self.strenght = strenght
+        self.start_str = strenght
         self.agility = agility
+        self.start_agi = agility
         self.magic = magic
         self.defense = defense
         self.magic_defense = magic_defense
@@ -80,6 +86,22 @@ class Character():
             else:
                 self.idle()
    
+    def reset(self):
+        self.alive = True
+        self.hp = self.max_hp
+        self.mp = self.max_mp
+        self.agility = self.start_agi
+        self.strenght = self.start_str
+        self.hp_potionshp_potions = self.max_hp_potion
+        self.mp_potions = self.max_mp_potion 
+        self.frame_index = 0
+        self.action = 0
+        self.update_time = pygame.time.get_ticks()
+        self.x = self.start_x
+        self.y = self.start_y
+  
+
+
     def idle(self):
             self.action = 0
             self.frame_index = 0

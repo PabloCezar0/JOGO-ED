@@ -53,7 +53,8 @@ right_icon = pygame.image.load('graphics/Icons/Right.png').convert_alpha()
 current_fighter = 1 #lutador 1 protagonista
 total_fighters = 1 #quantidade de personagens no combate
 action_cd = 0
-action_wait = 3000
+wait_time = 4000
+action_wait = wait_time
 attack = False #variavel para controlar se ataque ja foir realizado os de baixo fazem o mesmo com magias e pocoes
 fire_magic = False
 ice_magic = False
@@ -62,6 +63,8 @@ potion = False
 clicked = False
 level_over = 0 #1 acaba o level e manda para o proximo no
 game_win = 0 # 1 o jogo vence -1 game over
+heal = 0
+heal_mp = 0
 
 
 
@@ -105,7 +108,7 @@ def draw_panelEnemy():
 
 
 #criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
-Slime = character.Character(140,370,1,'Slime',100,100,10,10,10,5,10,2,2,1,8,0)
+Slime = character.Character(140,370,1,'Slime',100,100,100,10,10,5,10,2,2,1,8,0)
 Zombie1 = character.Character(700,385,5 ,'Zombie',50,0,5,0,3,50,1,0,0,1,7,1)
 Zombie2 = character.Character(500,385,5 ,'Zombie',50,0,5,0,3,2,1,0,0,1,7,1)
 
@@ -126,6 +129,9 @@ mp_button = buttons.Button(screen, 70,540, mp_potion_icon, 30, 30)
 fireball_button = buttons.Button(screen, 100,455, fireball_icon, 40, 50)
 ice_button = buttons.Button(screen, 160,455, ice_icon, 45, 45)
 lightning_button = buttons.Button(screen, 230,455, lightning_icon, 45, 45)
+restart_button = buttons.Button(screen, 300,100, restart_icon, 120, 28)
+left_button = buttons.Button(screen, 200,100, left_icon, 80, 28)
+right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
 
 
 
@@ -218,28 +224,39 @@ while run == True:
                             target = enemy_list[i]
 
 
-                if potion_button.clicked == True and potion == False and Slime.hp_potions > 0: #controla as pocoes, impede o usuario de usar pocao com hp maximo e impede o hp com a cura passar do hp maximo
-                    if Slime.hp <= 50:    
+                if  current_fighter ==  1 and potion_button.clicked == True and potion == False and Slime.hp_potions > 0: #controla as pocoes, impede o usuario de usar pocao com hp maximo e impede o hp com a cura passar do hp maximo
+                    if Slime.hp == Slime.max_hp:
+                        potion = True
+                        drawn_text('Health Full', font, red, 240, 230)
+                    if Slime.hp <= 50:
+                        drawn_text('+50', font, blue, 240, 250)    
                         Slime.hp += 50
                         potion = True
                         Slime.hp_potions -= 1
-                    if Slime.hp == Slime.max_hp:
-                        potion = True
+                    
                     if Slime.hp > 50 and Slime.hp != 100:
                         Slime.hp += Slime.max_hp - Slime.hp
+                        heal = Slime.max_hp - Slime.hp
+                        drawn_text('{heal}', font, blue, 240, 250)
                         potion = True
                         Slime.hp_potions -= 1
                     potion_button.clicked = False
 
-                if mp_button.clicked == True and potion == False and Slime.mp_potions > 0:#controla as pocoes, impede o usuario de usar pocao com mp maximo e impede o hp com a cura passar do mp maximo
-                    if Slime.mp <= 50:    
-                        Slime.mp += 50
-                        potion = True
-                        Slime.mp_potions -= 1
+                if  current_fighter ==  1 and mp_button.clicked == True and potion == False and Slime.mp_potions > 0 :#controla as pocoes, impede o usuario de usar pocao com mp maximo e impede o hp com a cura passar do mp maximo
                     if Slime.mp == Slime.max_mp:
                         potion = True
+                        drawn_text('Mana Full', font, blue, 240, 250)
+
+                    if Slime.mp <= 50:  
+                        drawn_text('+50', font, blue, 240, 250)  
+                        Slime.mp += 50
+                        potion = True            
+                        Slime.mp_potions -= 1
+                    
                     if Slime.mp > 50 and Slime.mp != 100:
                         Slime.mp += Slime.max_mp - Slime.mp
+                        heal_mp = Slime.max_mp - Slime.mp
+                        drawn_text('{heal_mp}', font, blue, 240, 250)
                         potion = True
                         Slime.mp_potions -= 1
                     mp_button.clicked = False
@@ -262,55 +279,67 @@ while run == True:
                                     potion = False
                                     potion_button.clicked = False
                                     mp_button.clicked = False
-                                    action_wait = 3000
+                                    action_wait = wait_time
 
                         if fire_magic == True and target.alive == True: #controla o ataque de fogo
-                            action_cd += 1
-                            if action_cd >= action_wait:
-                                #attack
-                                if fire_magic == True and target != None:                        
-                                    Slime.fire(target)
-                                    current_fighter += 1
-                                    action_cd = 0
-                                    fireball_button.clicked = False
-                                    potion = False
-                                    potion_button.clicked = False
-                                    mp_button.clicked = False
-                                    fire_magic = False
-                                    action_wait = 3000
+                            if Slime.mp >= 15: 
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    if fire_magic == True and target != None:                        
+                                        Slime.fire(target)
+                                        current_fighter += 1
+                                        action_cd = 0
+                                        fireball_button.clicked = False
+                                        potion = False
+                                        potion_button.clicked = False
+                                        mp_button.clicked = False
+                                        fire_magic = False
+                                        action_wait = wait_time
+                            else:
+                                drawn_text('No mana', font, blue, 240, 250) 
 
                         if ice_magic == True and target.alive == True: #controla o ataque de gelo
-                            action_cd += 1
-                            if action_cd >= action_wait:
-                                #attack
-                                if ice_magic == True and target != None:                        
-                                    Slime.ice(target)
-                                    current_fighter += 1
-                                    action_cd = 0
-                                    ice_button.clicked = False
-                                    potion = False
-                                    potion_button.clicked = False
-                                    mp_button.clicked = False
-                                    ice_magic = False
-                                    action_wait = 3000
+                            if Slime.mp >= 15: 
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    if ice_magic == True and target != None:                        
+                                        Slime.ice(target)
+                                        current_fighter += 1
+                                        action_cd = 0
+                                        ice_button.clicked = False
+                                        potion = False
+                                        potion_button.clicked = False
+                                        mp_button.clicked = False
+                                        ice_magic = False
+                                        action_wait = wait_time
+                            else:
+                                drawn_text('No mana', font, blue, 240, 250) 
+
 
                         if lightning_magic == True and target.alive == True: #controla o ataque de raio
-                            action_cd += 1
-                            if action_cd >= action_wait:
-                                #attack
-                                if lightning_magic == True and target != None:                        
-                                    Slime.lightning(target)
-                                    current_fighter += 1
-                                    action_cd = 0
-                                    lightning_button.clicked = False
-                                    potion = False
-                                    potion_button.clicked = False
-                                    mp_button.clicked = False
-                                    lightning_magic = False
-                                    action_wait = 2000
-                                    
+                            if Slime.mp >= 15:
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    if lightning_magic == True and target != None:                        
+                                        Slime.lightning(target)
+                                        current_fighter += 1
+                                        action_cd = 0
+                                        lightning_button.clicked = False
+                                        potion = False
+                                        potion_button.clicked = False
+                                        mp_button.clicked = False
+                                        lightning_magic = False
+                                        action_wait = wait_time
+                            else:
+                                 drawn_text('No mana', font, blue, 240, 250)  
+
+
                 else: 
                     level_over = -1
+                    
                 for count, enemy in enumerate(enemy_list): #controla o ataque do inimigo o target sempre eh o slime
                     if current_fighter == 2 + count:
                         if enemy.alive == True:
@@ -327,6 +356,14 @@ while run == True:
                 #reseta o turno para o protagonista
                 if current_fighter > total_fighters :
                     current_fighter = 1
+                for enemy in enemy_list:
+                    if enemy.alive == True:
+                        enemy_alive += 1
+                    if enemy.alive == False:
+                        enemy_alive -= 1
+
+                if enemy_alive == 0:
+                    level_over = 1
 
         #faz as imagens serem as padroes apos ataque
         if sword_button.clicked == False:
@@ -339,23 +376,32 @@ while run == True:
             lightning_button.image = lightning_icon
 
         #check para vitoria
-        for enemy in enemy_list:
-            if enemy.alive == True:
-                enemy_alive += 1
-            if enemy.alive == False:
-                enemy_alive -= 1
-
-        if enemy_alive == 0:
-            level_over = 1
         
-        if level_over != 0:
-            if level_over == 1:
-                screen.blit(victory_icon, (250,0))
-                screen.blit(left_icon, (200,100))
-                screen.blit(right_icon, (500,100))
-            if level_over == -1:
-                screen.blit(defeat_icon, (250,0))
-                screen.blit(restart_icon, (300,100))
+
+        
+
+            
+        if level_over == -1:
+            restart_button.clicked = False
+            screen.blit(defeat_icon, (250,0))
+            if restart_button.draw():
+                Slime.reset()
+                for enemy in enemy_list:
+                    enemy.reset()
+                current_fighter = 1
+                level_over = 0
+
+        if level_over == 1:
+
+            screen.blit(victory_icon, (250,0))
+            left_button.clicked = False
+            right_button.clicked = False
+            if left_button.draw():
+                Slime.reset()
+                for enemy in enemy_list:
+                    enemy.reset()
+                current_fighter = 1
+                level_over = 0
 
 
         for event in pygame.event.get():
