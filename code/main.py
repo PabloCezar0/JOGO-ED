@@ -108,7 +108,7 @@ def draw_panelEnemy(aux):
 
 
 #criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
-Slime = character.Character(140,370,1,'Slime',100,100,5,100,10,0,10,2,2,1,8,0)
+Slime = character.Character(140,370,1,'Slime',100,100,550,100,10,0,10,2,2,1,8,0)
 Zombie1 = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,50,1,0,0,1,7,1)
 Zombie2 = character.Character(500,385,5 ,'Zombie',50,0,10,0,3,2,1,0,0,1,7,1)
 Skelleton1 = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,50,1,0,0,1,18,1)
@@ -307,6 +307,9 @@ while run == True:
                                     potion_button.clicked = False
                                     mp_button.clicked = False
                                     action_wait = wait_time
+                                    if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
 
                         if fire_magic == True and target.alive == True: #controla o ataque de fogo
                             if Slime.mp >= 15: #so executa o ataque se mana for maior que 15
@@ -323,6 +326,9 @@ while run == True:
                                         mp_button.clicked = False
                                         fire_magic = False
                                         action_wait = wait_time
+                                        if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
                             else:
                                 drawn_text('No mana', font, blue, 240, 250) 
 
@@ -341,6 +347,9 @@ while run == True:
                                         mp_button.clicked = False
                                         ice_magic = False
                                         action_wait = wait_time
+                                        if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
                             else:
                                 drawn_text('No mana', font, blue, 240, 250) 
 
@@ -360,6 +369,9 @@ while run == True:
                                         mp_button.clicked = False
                                         lightning_magic = False
                                         action_wait = wait_time
+                                        if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
                             else:
                                  drawn_text('No mana', font, blue, 240, 250)  
 
@@ -386,13 +398,14 @@ while run == True:
                 #reseta o turno para o protagonista
                 if current_fighter > total_fighters :
                     current_fighter = 1
-
+                
                 if enemy.alive == False in aux:
                         enemy_alive -= 1
 
                 if enemy_alive == 0:
                     level_over = 1
 
+                print(enemy_alive)
 
         #faz as imagens serem as padroes apos ataque
         if sword_button.clicked == False:
@@ -415,6 +428,7 @@ while run == True:
                 Slime.reset()
                 for enemy in aux:
                     enemy.reset()
+                    enemy_alive += 1
                 current_fighter = 1
                 level_over = 0
                 sword_button.clicked = False
