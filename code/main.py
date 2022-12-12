@@ -65,6 +65,7 @@ level_over = 0 #1 acaba o level e manda para o proximo no
 game_win = 0 # 1 o jogo vence -1 game over
 heal = 0
 heal_mp = 0
+enemy_magic = 0
 
 
 
@@ -108,7 +109,7 @@ def draw_panelEnemy(aux):
 
 
 #criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
-Slime = character.Character(140,370,1,'Slime',100,100,550,100,10,0,10,2,2,1,8,0)
+Slime = character.Character(140,370,1,'Slime',100,100,5,100,10,0,10,2,2,1,8,0)
 Zombie1 = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,50,1,0,0,1,7,1)
 Zombie2 = character.Character(500,385,5 ,'Zombie',50,0,10,0,3,2,1,0,0,1,7,1)
 Skelleton1 = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,50,1,0,0,1,18,1)
@@ -116,16 +117,20 @@ Skelleton2 = character.Character(500,360,5 ,'Skelleton',50,0,5,0,3,50,1,0,0,1,18
 
 
 
+#Bosses
+Demon = character.Character(500,130,4 ,'Demon of Fire',50,50,10,0,3,50,1,0,0,1,22,1)
+Lich = character.Character(600,200,6 ,'Lich',50,50,10,0,3,50,1,0,0,1,18,1)
+
+
+
 
 #coloca os inimigos em uma lista 
 enemy_list = Queue()
 enemy_alive = 0
-enemy_list.enqueue(Skelleton1)
+enemy_list.enqueue(Lich)
 enemy_alive += 1
 total_fighters +=1
-enemy_list.enqueue(Zombie2)
-enemy_alive += 1
-total_fighters +=1
+
     
 
 #criar botoes para pressionar
@@ -385,13 +390,38 @@ while run == True:
                 for count, enemy in enumerate(aux): #controla o ataque do inimigo o target sempre eh o slime
                     if current_fighter == 2 + count:
                         if enemy.alive == True:
-                            action_cd += 1
-                            if action_cd >= action_wait:
-                                #attack
-                                enemy.attack(Slime)
-                                current_fighter += 1
-                                action_cd = 0
-                                time.sleep(0.08)
+
+                            if enemy == Lich and enemy.mp < 30  or enemy == Demon and enemy_magic < 15 or enemy_magic == 1:
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    enemy.attack(Slime)
+                                    enemy_magic = 0
+                                    current_fighter += 1
+                                    action_cd = 0
+                                    time.sleep(0.08)
+
+                            if enemy == Lich and enemy.mp >= 30 and enemy_magic == 0:
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    enemy.death_magic(Slime)
+                                    enemy_magic = 1
+                                    current_fighter += 1
+                                    action_cd = 0
+                                    time.sleep(0.08)
+
+                            if enemy == Demon and enemy.mp >= 15 and enemy_magic == 0:
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    enemy.fire(Slime)
+                                    enemy_magic = 1
+                                    current_fighter += 1
+                                    action_cd = 0
+                                    time.sleep(0.08)
+
+                            
                         else:
                             current_fighter += 1
                 

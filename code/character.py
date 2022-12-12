@@ -164,7 +164,7 @@ class Character:
             target.alive = False
             target.dead()
 
-        self.action = 1
+        self.action = 2
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
         
@@ -187,7 +187,7 @@ class Character:
             target.alive = False
             target.dead()
 
-        self.action = 1
+        self.action = 2
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
 
@@ -209,7 +209,31 @@ class Character:
             target.hp = 0
             target.alive = False
             target.dead()
+        self.action = 2
+        self.frame_index = 0
+        self.update_time = pygame.time.get_ticks()
+    
+    def death_magic(self,target):
 
-        self.action = 1
+        self.mp -= 30
+        rand = random.randint(0,50)
+        if rand >= 40:
+            damage = self.magic * 3
+        else: 
+            damage = self.magic * 2
+        if target.weakness == 2 or target.weakness == 5:
+            damage = damage*2
+            target.magic_defense -= 2
+            target.defense -= 2
+        if damage - target.magic_defense > 0:
+            target.hp -= damage - target.magic_defense 
+        target.hurt()
+        target.action = 3
+        if target.hp < 1:#checa se ta morto ou nao
+            target.hp = 0
+            target.alive = False
+            target.dead()
+
+        self.action = 2
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
