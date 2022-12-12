@@ -103,7 +103,7 @@ def draw_panelSlime():
 def draw_panelEnemy(aux):
         screen.blit(enemy_panel_img, (450,450))
         for count, i in enumerate(aux):
-            drawn_text(f'{i.name} HP: {i.hp} {count}', font, red, 550 , 450 + 80*count )
+            drawn_text(f'{i.name} HP: {i.hp} {count+1}', font, red, 550 , 450 + 80*count )
             drawn_text(f'{i.name} MP: {i.mp}', font, blue, 550, 480 + 80*count )
 
 
@@ -201,7 +201,7 @@ while run == True:
                             screen.blit(active_attack_icon, pos)
                             if clicked == True:
                                 attack = True
-                                target = enemy_list[i]
+                                target = aux[i]
 
                     if fireball_button.clicked == True:
                         if ice_button.clicked == True or lightning_button.clicked == True:
@@ -215,7 +215,7 @@ while run == True:
                             screen.blit(active_fireball_icon, pos)
                             if clicked == True:
                                 fire_magic = True
-                                target = enemy_list[i]
+                                target = aux[i]
             
                     if ice_button.clicked == True:
                         if lightning_button.clicked == True:
@@ -229,7 +229,7 @@ while run == True:
                             screen.blit(active_ice_icon, pos)
                             if clicked == True:
                                 ice_magic = True
-                                target = enemy_list[i]
+                                target = aux[i]
 
                     if lightning_button.clicked == True:
                         sword_button.clicked = False
@@ -241,7 +241,7 @@ while run == True:
                             screen.blit(active_lightning_icon, pos)
                             if clicked == True:
                                 lightning_magic = True
-                                target = enemy_list[i]
+                                target = aux[i]
 
 
                 if  current_fighter ==  1 and potion_button.clicked == True and potion == False and Slime.hp_potions > 0: #controla as pocoes, impede o usuario de usar pocao com hp maximo e impede o hp com a cura passar do hp maximo
@@ -387,7 +387,7 @@ while run == True:
                 if current_fighter > total_fighters :
                     current_fighter = 1
 
-                if enemy.alive == False in enemy_list:
+                if enemy.alive == False in aux:
                         enemy_alive -= 1
 
                 if enemy_alive == 0:
@@ -413,7 +413,7 @@ while run == True:
             right_button.clicked = False
             if left_button.draw() or right_button.draw():
                 Slime.reset()
-                for enemy in enemy_list:
+                for enemy in aux:
                     enemy.reset()
                 current_fighter = 1
                 level_over = 0
@@ -429,7 +429,7 @@ while run == True:
             screen.blit(defeat_icon, (250,0))
             if restart_button.draw():
                 Slime.reset()
-                for enemy in enemy_list:
+                for enemy in aux:
                     enemy.reset()
                 current_fighter = 1
                 level_over = 0
