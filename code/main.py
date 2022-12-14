@@ -63,6 +63,7 @@ clicked = False
 heal = 0
 heal_mp = 0
 next_turn = 0
+turns = 0
 
 font = pygame.font.SysFont('Times New Roman', 18)#fonte
 
@@ -176,6 +177,7 @@ def turnAtack(person):
     global action_cd
     global action_wait
     global next_turn
+    global turns
     attack = False
     magic = random.randint(0,5)
     potion = False
@@ -354,6 +356,7 @@ def turnAtack(person):
                 drawn_text('No mana', font, blue, 240, 250)  
 
         if next_turn == 1:
+            turns += 1
             aux = person.dequeue()
             person.enqueue(aux)
             print(person.head.data.name)
@@ -434,6 +437,7 @@ while run == True:
     # todos fazem a mesma coisa, ao clicar em algum botao de ataque e colocar o mouse em cima do inimigo o cursos muda para o do icone de ataque ativo selecionado
 
         if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
+            print(turns)
 
             turnAtack(character_list)
 
@@ -444,10 +448,19 @@ while run == True:
                 level_over = -1          
 
             if character_list.head.data.name != 'Slime' and character_list.head.data.hp <= 0:
+                action_wait = 4000
+                action_cd = 0
+                turns = 0
                 level_over = 1 
+                
 
             if character_list.tail.data.name != 'Slime' and character_list.tail.data.hp <= 0:
+                action_wait = 4000
+                action_cd = 0
+                turns = 0
                 level_over = 1      
+
+            
 
         #faz as imagens serem as padroes apos ataque
         if sword_button.clicked == False:
@@ -461,17 +474,29 @@ while run == True:
 
 #check para vitoria 
         if level_over == 1:
-            action_wait = 0
+            
+            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
+                print(action_cd, action_wait)
+                if action_cd >= action_wait: 
+                    game_win = 1 
+                action_cd += 1
+            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
+                if action_cd >= action_wait: 
+                    game_win = 1 
+                action_cd += 1
             screen.blit(victory_icon, (250,0))
             left_button.clicked = False
             right_button.clicked = False
-            if left_button.draw():
-                print("entleft")
-                level = runHeap(percorreHeap, level, "left")
-                level_over = 0
-                
-            if right_button.draw():
-                level = runHeap(percorreHeap, level, "right")
+            if character_list.tail.data.name != 'Demon of Fire' and character_list.tail.data.name != 'Lich' :
+                if left_button.draw():
+                    print("entleft")
+                    level = runHeap(percorreHeap, level, "left")
+                    level_over = 0
+                    
+                if right_button.draw():
+                    print("entleft")
+                    level = runHeap(percorreHeap, level, "right")
+                    level_over = 0
 
             turnLevel(percorreHeap, Slime, character_list, level)
 
@@ -479,6 +504,7 @@ while run == True:
             fireball_button.clicked = False
             ice_button.clicked = False
             lightning_button.clicked = False
+            action_cd += 1
         
 #derrota
         if level_over == -1:
