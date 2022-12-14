@@ -58,9 +58,31 @@ class MinHeap:
 # Organiza o Heap de baixo para cima
     def upHeap(self, index):
         while(self.hasFather(index) and self.father(index).level > self.storage[index].level):
-            self.swap(self.fatherIndex(index), index)
+            self.swap(self.fatherIndex(index),index)
             index = self.fatherIndex(index)
+
+
+    def downHeap(self):
+        index = 0
+        while(self.hasLeft(index)):
+            smallerChildIndex = self.leftChildIndex(index)
+            if self.hasRight(index) and self.rightChild(index).level < self.leftChild(index).level:
+                smallerChildIndex = self.rightChildIndex(index)
+            if self.storage[index].level < self.storage[smallerChildIndex]:
+                break
+            else:
+                self.swap(index, smallerChildIndex)
+            index = smallerChildIndex
      
+    def remove(self):
+        if self.size == 0:
+            print("Heap Vazio!")
+        else:
+            data = self.storage[0]
+            self.storage[0] = self.storage[self.size-1]
+            self.size -= 1
+            self.downHeap()
+            return data
     
     def __str__(self):
         aux = self.storage

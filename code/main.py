@@ -6,6 +6,7 @@ import character
 import buttons
 from fila import Queue
 from heap import MinHeap
+from credits import Credits
 import random
 
 
@@ -119,9 +120,9 @@ right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
 Slime = character.Character(140,370,1,'Slime',100,100,10,100,10,10,10,2,2,1,8,0)
 enemyList = [0]*4
 enemyList[0] = character.Character(700,385,5 ,'Zombie',5,0,10,0,3,0,1,0,0,1,7,1)
-enemyList[1] = character.Character(500,385,5 ,'Zombie',6,0,10,0,4,2,1,0,0,2,7,1)
+enemyList[1] = character.Character(700,385,5 ,'Zombie',6,0,10,0,4,2,1,0,0,2,7,1)
 enemyList[2] = character.Character(700,360,5 ,'Skelleton',5,0,10,0,3,0,1,0,0,1,18,1)
-enemyList[3] = character.Character(500,360,5 ,'Skelleton',6,0,5,0,3,50,1,0,0,2,18,1)
+enemyList[3] = character.Character(700,360,5 ,'Skelleton',6,0,5,0,3,50,1,0,0,2,18,1)
 
 #Bosses
 bossList = [0]*4
@@ -130,23 +131,6 @@ bossList[1] = character.Character(500,130,4 ,'Demon of Fire',95,50,10,0,3,50,1,0
 bossList[2] = character.Character(600,200,6 ,'Lich',80,100,10,0,3,50,1,0,0,5,18,1)
 bossList[3] = character.Character(600,200,6 ,'Lich',95,100,10,0,3,50,1,0,0,6,18,1)
 
-# Cria a árvore min-Heap
-percorreHeap = MinHeap(15)
-
-for i in range(0,7):
-    percorreHeap.insert(random.choice(enemyList))
-
-for i in range(0,8):
-    percorreHeap.insert(random.choice(bossList))
-
-# print(percorreHeap.storage[0].name, percorreHeap.storage[0].level, percorreHeap.leftChildIndex(0))
-# print(percorreHeap.storage[1].name, percorreHeap.storage[1].level, percorreHeap.rightChildIndex(1))
-# print(percorreHeap.storage[2].name, percorreHeap.storage[2].level)
-# print(percorreHeap.storage[3].name, percorreHeap.storage[3].level)
-# print(percorreHeap.storage[4].name, percorreHeap.storage[4].level)
-# print(percorreHeap.storage[5].name, percorreHeap.storage[5].level)
-# print(percorreHeap.storage[6].name, percorreHeap.storage[6].level, percorreHeap.fatherIndex(6))
-print(percorreHeap)
 #Função que percorre a Heap
 
 def runHeap(heap, level, side):
@@ -159,20 +143,28 @@ def runHeap(heap, level, side):
 
 # Função que percorre os leveis da Heap    
 def turnLevel(Heap, Slime, Queue, level):
-    Queue.dequeue()
-    Queue.dequeue()
+    cleanQueue(Queue)
     Queue.enqueue(Slime)
     Queue.enqueue(Heap.storage[level])
 
+def cleanQueue(Queue):
+    while Queue.head is not None:
+        Queue.dequeue()
+
 #Função que cria o turno da fase
-def turnQueue(Queue):
-    turnAtack(Queue)
+def turnQueue(Queue, turns):
     aux = Queue.dequeue()
     Queue.enqueue(aux)
+    if aux.data.name == 'Slime':
+        turns +=1
+
+def pontuation(hp, turns, level):
+    points = hp+(turns*level)
+    return points
 
 
 # Função que aciona os ataques
-def turnAtack(person):
+def turnAtack(person, turns):
     global wait_time
     global action_cd
     global action_wait
@@ -387,18 +379,29 @@ def turnAtack(person):
                 person.head.data.attack(person.tail.data)
                 time.sleep (0.08)
             
-            aux = person.dequeue()
-            person.enqueue(aux)
-            print(person.head.data.name)
+            turnQueue(person, turns)
             action_cd = 0
 
+# Cria a árvore min-Heap
+gameHeap = MinHeap(15)
 
+for i in range(0,7):
+    gameHeap.insert(random.choice(enemyList))
+
+for i in range(0,8):
+    gameHeap.insert(random.choice(bossList))
+
+#Cria o heap utilizado para fazer o heap sort do crédito
+pontuationHeap = MinHeap(4)
+
+print(gameHeap)
 
 #coloca os inimigos em uma lista 
 character_list = Queue()
 enemy_alive = 0
 level = 0
-turnLevel(percorreHeap, Slime, character_list, level)
+turns = 0
+turnLevel(gameHeap, Slime, character_list, level)
 enemy_alive += 1
 
 while run == True:
@@ -439,7 +442,7 @@ while run == True:
         if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
             print(turns)
 
-            turnAtack(character_list)
+            turnAtack(character_list, turns)
 
             if  character_list.tail.data.name == 'Slime' and character_list.tail.data.hp <= 0:
                 level_over = -1
@@ -487,19 +490,20 @@ while run == True:
             screen.blit(victory_icon, (250,0))
             left_button.clicked = False
             right_button.clicked = False
-            if character_list.tail.data.name != 'Demon of Fire' and character_list.tail.data.name != 'Lich' :
-                if left_button.draw():
-                    print("entleft")
-                    level = runHeap(percorreHeap, level, "left")
-                    level_over = 0
-                    
-                if right_button.draw():
-                    print("entleft")
-                    level = runHeap(percorreHeap, level, "right")
-                    level_over = 0
+            if left_button.draw():
+                print("entleft")
+                level = runHeap(gameHeap, level, "left")
+                level_over = 0
+                
+            if right_button.draw():
+                level = runHeap(gameHeap, level, "right")
 
-            turnLevel(percorreHeap, Slime, character_list, level)
+            pontuation(character_list.head.data.hp, turns, character_list.tail.data.level)
+            auxPoint = Credits(character_list.tail, pontuation)
+            pontuationHeap.insert(auxPoint)
+            turnLevel(gameHeap, Slime, character_list, level)
 
+            turns = 0
             sword_button.clicked = False
             fireball_button.clicked = False
             ice_button.clicked = False
