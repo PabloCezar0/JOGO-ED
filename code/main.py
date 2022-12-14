@@ -159,8 +159,11 @@ for i in range(0,8):
 print(percorreHeap)
 #Função que percorre a Heap
 
-def runHeap(heap):
-    pass
+def runHeap(heap, level, side):
+    if side == "left":
+        level = heap.leftChildIndex(level)
+    else:
+        level = heap.rightChildIndex(level)
 
 # Função que percorre os leveis da Heap    
 def turnLevel(Heap, Slime, Queue, level):
@@ -396,28 +399,12 @@ def turnAtack(person):
 #coloca os inimigos em uma lista 
 character_list = Queue()
 enemy_alive = 0
-character_list.enqueue(Slime)
-character_list.enqueue(bossList[2])
+level = 0
+turnLevel(percorreHeap, Slime, character_list, level)
 enemy_alive += 1
-
-
-    
-
-#criar botoes para pressionar
-sword_button = buttons.Button(screen, 25,460, attack_icon, 50, 50)
-potion_button = buttons.Button(screen, 30,540, potion_icon, 30, 30)
-mp_button = buttons.Button(screen, 70,540, mp_potion_icon, 30, 30)
-fireball_button = buttons.Button(screen, 100,455, fireball_icon, 40, 50)
-ice_button = buttons.Button(screen, 160,455, ice_icon, 45, 45)
-lightning_button = buttons.Button(screen, 230,455, lightning_icon, 45, 45)
-restart_button = buttons.Button(screen, 300,100, restart_icon, 120, 28)
-left_button = buttons.Button(screen, 200,100, left_icon, 80, 28)
-right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
 
 while run == True:
     clock.tick(FPS) #limita o fps para o colocado em settings
-
-    
 
     while game_win == 0 and run == True:
         draw_bg() #mostra background na tela
@@ -468,10 +455,6 @@ while run == True:
 
             if character_list.tail.data.name != 'Slime' and character_list.tail.data.hp <= 0:
                 level_over = 1      
-
-
-         
-
 
         #faz as imagens serem as padroes apos ataque
         if sword_button.clicked == False:
