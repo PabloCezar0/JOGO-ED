@@ -17,6 +17,7 @@ class Character:
         self.hp = max_hp
         self.max_mp = max_mp
         self.mp = max_mp
+        self.magic = 0
         self.max_hp_potion = hp_potions
         self.max_mp_potion = mp_potions
         self.strenght = strenght
