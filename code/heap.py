@@ -53,18 +53,18 @@ class MinHeap:
             print("Está Cheio!")
         self.storage[self.size] = data
         self.size +=1
-        self.upHeap()
+        self.upHeap(self.size -1)
 
 # Organiza o Heap de baixo para cima
-    def upHeap(self):
-        index = self.size -1
+    def upHeap(self, index):
         while(self.hasFather(index) and self.father(index).level > self.storage[index].level):
             self.swap(self.fatherIndex(index), index)
             index = self.fatherIndex(index)
      
+    
     def __str__(self):
         aux = self.storage
         prim = ''
         for i in aux:
-            prim += str(i) + '->'
+            prim += i.name + str(i.level) + '; '
         return prim

@@ -127,32 +127,51 @@ right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
 
 #criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
 Slime = character.Character(140,370,1,'Slime',100,100,10,100,10,10,10,2,2,1,8,0)
-Zombie = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,0,1,0,0,1,7,1)
-Zombie2 = character.Character(500,385,5 ,'Zombie',50,0,10,0,3,2,1,0,0,1,7,1)
-Skelleton = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,0,1,0,0,1,18,1)
-Skelleton2 = character.Character(500,360,5 ,'Skelleton',50,0,5,0,3,50,1,0,0,1,18,1)
+enemyList = [0]*4
+enemyList[0] = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,0,1,0,0,1,7,1)
+enemyList[1] = character.Character(500,385,5 ,'Zombie',65,0,10,0,4,2,1,0,0,2,7,1)
+enemyList[2] = character.Character(700,360,5 ,'Skelleton',55,0,10,0,3,0,1,0,0,1,18,1)
+enemyList[3] = character.Character(500,360,5 ,'Skelleton',65,0,5,0,3,50,1,0,0,2,18,1)
 
+#Bosses
+bossList = [0]*4
+bossList[0] = character.Character(500,130,4 ,'Demon of Fire',80,50,10,0,3,50,1,0,0,5,22,1)
+bossList[1] = character.Character(500,130,4 ,'Demon of Fire',95,50,10,0,3,50,1,0,0,6,22,1)
+bossList[2] = character.Character(600,200,6 ,'Lich',80,100,10,0,3,50,1,0,0,5,18,1)
+bossList[3] = character.Character(600,200,6 ,'Lich',95,100,10,0,3,50,1,0,0,6,18,1)
 
 # Cria a árvore min-Heap
 percorreHeap = MinHeap(15)
 
-# percorreHeap.insert(Zombie)
-# percorreHeap.insert(Zombie2)
-# percorreHeap.insert(Skelleton)
-# percorreHeap.insert(Skelleton2)
+for i in range(0,7):
+    percorreHeap.insert(random.choice(enemyList))
 
-#Bosses
-Demon = character.Character(500,130,4 ,'Demon of Fire',50,50,10,0,3,50,1,0,0,1,22,1)
-Lich = character.Character(600,200,6 ,'Lich',50,100,10,0,3,50,1,0,0,1,18,1)
+for i in range(0,8):
+    percorreHeap.insert(random.choice(bossList))
 
+# print(percorreHeap.storage[0].name, percorreHeap.storage[0].level, percorreHeap.leftChildIndex(0))
+# print(percorreHeap.storage[1].name, percorreHeap.storage[1].level, percorreHeap.rightChildIndex(1))
+# print(percorreHeap.storage[2].name, percorreHeap.storage[2].level)
+# print(percorreHeap.storage[3].name, percorreHeap.storage[3].level)
+# print(percorreHeap.storage[4].name, percorreHeap.storage[4].level)
+# print(percorreHeap.storage[5].name, percorreHeap.storage[5].level)
+# print(percorreHeap.storage[6].name, percorreHeap.storage[6].level, percorreHeap.fatherIndex(6))
+print(percorreHeap)
+#Função que percorre a Heap
 
+def runHeap(heap):
+    pass
 
+# Função que percorre os leveis da Heap    
+def turnLevel(Heap, Slime, Queue, level):
+    Queue.enqueue(Slime)
+    Queue.enqueue(Heap.storage[level])
 
 #Função que cria o turno da fase
-def turnQueue(queue):
-    turnAtack(queue)
-    aux = queue.dequeue()
-    queue.enqueue(aux)
+def turnQueue(Queue):
+    turnAtack(Queue)
+    aux = Queue.dequeue()
+    Queue.enqueue(aux)
 
 
 # Função que aciona os ataques
@@ -167,8 +186,6 @@ def turnAtack(person):
     ice_magic = False
     lightning_magic = False
     aux = None
-
-    
 
     if person.head.data.name == 'Slime':
         if sword_button.clicked == True:
@@ -349,7 +366,7 @@ def turnAtack(person):
         action_cd += 1
         if action_cd >= action_wait:
 
-            if person.head.data.name == Lich and person.head.data.mp < 30  or person.head.data.name == Demon and person.head.data.mp < 15 or magic == 5:
+            if person.head.data.name == 'Lich' and person.head.data.mp < 30  or person.head.data.name == 'Demon' and person.head.data.mp < 15 or magic == 5:
 
             
                 if person.head.data.name == 'Lich' and person.head.data.mp >= 30 and magic == 5:
@@ -357,7 +374,7 @@ def turnAtack(person):
                     person.head.data.death_magic(person.tail.data)
                     time.sleep(0.08)
 
-                if person.head.data.name == Demon and person.head.data.mp >= 15 and magic == 5:
+                if person.head.data.name == 'Demon' and person.head.data.mp >= 15 and magic == 5:
                     #attack
                     person.head.data.fire(person.tail.data)
                     time.sleep(0.08)
@@ -375,15 +392,12 @@ def turnAtack(person):
             action_cd = 0
 
 
-# Função que percorre os leveis da Heap    
-def turnLevel(percorreHeap):
-    pass
 
 #coloca os inimigos em uma lista 
 character_list = Queue()
 enemy_alive = 0
 character_list.enqueue(Slime)
-character_list.enqueue(Lich)
+character_list.enqueue(bossList[2])
 enemy_alive += 1
 
 
@@ -399,8 +413,6 @@ lightning_button = buttons.Button(screen, 230,455, lightning_icon, 45, 45)
 restart_button = buttons.Button(screen, 300,100, restart_icon, 120, 28)
 left_button = buttons.Button(screen, 200,100, left_icon, 80, 28)
 right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
-
-
 
 while run == True:
     clock.tick(FPS) #limita o fps para o colocado em settings
@@ -427,29 +439,11 @@ while run == True:
             character_list.tail.data.draw()
             character_list.tail.data.update()
         
-        percorreFila = character_list.head
-        aux = []
-        while percorreFila:
-            aux.insert(0, percorreFila.data)
-            percorreFila = percorreFila.next
-        
 
         draw_panelEnemy(character_list)
 
         #controlar o ataque
         
-
-
-
-
-
-
-
-            
-
-            
-
-    
         pygame.mouse.set_visible(True)#mostra o mouse normal apos ataque
 
         pos = pygame.mouse.get_pos()#pega a posicao do mosue e coloca em pos
