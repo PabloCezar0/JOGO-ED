@@ -59,21 +59,10 @@ game_win = 0 # 1 o jogo vence -1 game over
 action_cd = 0
 wait_time = 4000
 action_wait = wait_time
-attack = False #variavel para controlar se ataque ja foir realizado os de baixo fazem o mesmo com magias e pocoes
-fire_magic = False
-ice_magic = False
-lightning_magic = False
 clicked = False
-potion = False
 heal = 0
 heal_mp = 0
 next_turn = 0
-
-
-
-
-
-
 
 font = pygame.font.SysFont('Times New Roman', 18)#fonte
 
@@ -128,10 +117,10 @@ right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
 #criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
 Slime = character.Character(140,370,1,'Slime',100,100,10,100,10,10,10,2,2,1,8,0)
 enemyList = [0]*4
-enemyList[0] = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,0,1,0,0,1,7,1)
-enemyList[1] = character.Character(500,385,5 ,'Zombie',65,0,10,0,4,2,1,0,0,2,7,1)
-enemyList[2] = character.Character(700,360,5 ,'Skelleton',55,0,10,0,3,0,1,0,0,1,18,1)
-enemyList[3] = character.Character(500,360,5 ,'Skelleton',65,0,5,0,3,50,1,0,0,2,18,1)
+enemyList[0] = character.Character(700,385,5 ,'Zombie',5,0,10,0,3,0,1,0,0,1,7,1)
+enemyList[1] = character.Character(500,385,5 ,'Zombie',6,0,10,0,4,2,1,0,0,2,7,1)
+enemyList[2] = character.Character(700,360,5 ,'Skelleton',5,0,10,0,3,0,1,0,0,1,18,1)
+enemyList[3] = character.Character(500,360,5 ,'Skelleton',6,0,5,0,3,50,1,0,0,2,18,1)
 
 #Bosses
 bossList = [0]*4
@@ -179,6 +168,7 @@ def turnQueue(Queue):
 
 # Função que aciona os ataques
 def turnAtack(person):
+    global wait_time
     global action_cd
     global action_wait
     global next_turn
@@ -440,9 +430,7 @@ while run == True:
 
         if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
 
-
             turnAtack(character_list)
-
 
             if  character_list.tail.data.name == 'Slime' and character_list.tail.data.hp <= 0:
                 level_over = -1
@@ -466,43 +454,40 @@ while run == True:
         if lightning_button.clicked == False:
             lightning_button.image = lightning_icon
 
-        #check para vitoria
-        
+#check para vitoria 
         if level_over == 1:
             action_wait = 0
             screen.blit(victory_icon, (250,0))
             left_button.clicked = False
             right_button.clicked = False
-            if left_button.draw() or right_button.draw():
-                Slime.reset()
-                for enemy in aux:
-                    enemy.reset()
-                    enemy_alive += 1
-                current_fighter = 1
+            if left_button.draw():
+                print("entleft")
+                runHeap(percorreHeap, level, "left")
                 level_over = 0
-                sword_button.clicked = False
+                
+            elif right_button.draw():
+                runHeap(percorreHeap, level, "right")
+
+            turnLevel(percorreHeap, Slime, character_list, level)
+
+            sword_button.clicked = False
             fireball_button.clicked = False
             ice_button.clicked = False
             lightning_button.clicked = False
         
-
-            #derrota
+#derrota
         if level_over == -1:
             restart_button.clicked = False
             screen.blit(defeat_icon, (250,0))
             if restart_button.draw():
-                Slime.reset()
-                for enemy in aux:
-                    enemy.reset()
+                character_list.head.reset()
+                character_list.tail.reset()
                 current_fighter = 1
                 level_over = 0
             sword_button.clicked = False
             fireball_button.clicked = False
             ice_button.clicked = False
             lightning_button.clicked = False
-
-        
-
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
