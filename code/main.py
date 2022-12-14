@@ -169,7 +169,7 @@ def turnAtack(person, turns):
     global action_cd
     global action_wait
     global next_turn
-    global turns
+
     attack = False
     magic = random.randint(0,5)
     potion = False
@@ -286,7 +286,7 @@ def turnAtack(person, turns):
                 mp_button.clicked = False
                 if person.tail.data.hp == 0:
                     person.tail.data.alive = False
-                next_turn = 1
+                
 
 
 
@@ -303,7 +303,6 @@ def turnAtack(person, turns):
                     action_wait = wait_time
                     if person.tail.data.hp == 0:
                         person.tail.data.alive = False
-                    next_turn = 1
 
 
             else:
@@ -322,7 +321,7 @@ def turnAtack(person, turns):
                     action_wait = wait_time
                     if person.tail.data.hp == 0:
                         person.tail.data.alive = False
-                    next_turn = 1
+                    
 
 
             else:
@@ -341,19 +340,11 @@ def turnAtack(person, turns):
                     lightning_magic = False
                     if person.tail.data.hp == 0:
                         person.tail.data.alive = False
-                    next_turn = 1
+                    
 
  
             else:
                 drawn_text('No mana', font, blue, 240, 250)  
-
-        if next_turn == 1:
-            turns += 1
-            aux = person.dequeue()
-            person.enqueue(aux)
-            print(person.head.data.name)
-            wait_time = 0
-            next_turn = 0
 
     if person.head.data.name != 'Slime':
         action_cd += 1
@@ -440,7 +431,6 @@ while run == True:
     # todos fazem a mesma coisa, ao clicar em algum botao de ataque e colocar o mouse em cima do inimigo o cursos muda para o do icone de ataque ativo selecionado
 
         if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
-            print(turns)
 
             turnAtack(character_list, turns)
 
@@ -453,14 +443,12 @@ while run == True:
             if character_list.head.data.name != 'Slime' and character_list.head.data.hp <= 0:
                 action_wait = 4000
                 action_cd = 0
-                turns = 0
                 level_over = 1 
                 
 
             if character_list.tail.data.name != 'Slime' and character_list.tail.data.hp <= 0:
                 action_wait = 4000
                 action_cd = 0
-                turns = 0
                 level_over = 1      
 
             
