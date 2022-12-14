@@ -5,6 +5,7 @@ import time
 import character
 import buttons
 from fila import Queue
+from heap import MinHeap
 
 
 
@@ -107,27 +108,6 @@ def draw_panelEnemy(aux):
             drawn_text(f'{i.name} MP: {i.mp}', font, blue, 550, 480 + 80*count )
 
 
-#criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
-Slime = character.Character(140,370,1,'Slime',100,100,5,100,10,0,10,2,2,1,8,0)
-Zombie1 = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,50,1,0,0,1,7,1)
-Zombie2 = character.Character(500,385,5 ,'Zombie',50,0,10,0,3,2,1,0,0,1,7,1)
-Skelleton1 = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,50,1,0,0,1,18,1)
-Skelleton2 = character.Character(500,360,5 ,'Skelleton',50,0,5,0,3,50,1,0,0,1,18,1)
-
-
-
-
-#coloca os inimigos em uma lista 
-enemy_list = Queue()
-enemy_alive = 0
-enemy_list.enqueue(Skelleton1)
-enemy_alive += 1
-total_fighters +=1
-enemy_list.enqueue(Zombie2)
-enemy_alive += 1
-total_fighters +=1
-    
-
 #criar botoes para pressionar
 sword_button = buttons.Button(screen, 25,460, attack_icon, 50, 50)
 potion_button = buttons.Button(screen, 30,540, potion_icon, 30, 30)
@@ -139,7 +119,104 @@ restart_button = buttons.Button(screen, 300,100, restart_icon, 120, 28)
 left_button = buttons.Button(screen, 200,100, left_icon, 80, 28)
 right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
 
+#criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
+Slime = character.Character(140,370,1,'Slime',100,100,5,100,10,0,10,2,2,1,8,0)
+Zombie1 = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,50,1,0,0,1,7,1)
+Zombie2 = character.Character(500,385,5 ,'Zombie',50,0,10,0,3,2,1,0,0,2,7,1)
+Skelleton1 = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,50,1,0,0,2,18,1)
+Skelleton2 = character.Character(500,360,5 ,'Skelleton',50,0,5,0,3,50,1,0,0,3,18,1)
 
+
+# Cria a árvore min-Heap
+percorreHeap = MinHeap(15)
+
+percorreHeap.insert(Zombie1)
+percorreHeap.insert(Zombie2)
+percorreHeap.insert(Skelleton1)
+percorreHeap.insert(Skelleton2)
+
+
+#Função que cria o turno da fase
+def turnQueue(queue):
+    if queue.head.alive == True:
+        aux = queue.dequeue()
+        turnAtack(aux)
+        queue.enqueue(aux)
+    else:
+        level_over = 1
+
+# Função que aciona os ataques
+def turnAtack(person):
+    if person.name == 'Slime':
+        if sword_button.clicked == True:
+            if fireball_button.clicked == True or lightning_button.clicked == True or ice_button.clicked == True:
+                sword_button.clicked = False
+            fireball_button.clicked = False
+            ice_button.clicked = False
+            lightning_button.clicked = False
+            sword_button.image = active_attack_icon
+            if person.rect.collidepoint(pos):
+                pygame.mouse.set_visible(False)
+                screen.blit(active_attack_icon, pos)
+                if clicked == True:
+                    attack = True
+                    target = aux[i]
+
+        if fireball_button.clicked == True:
+            if ice_button.clicked == True or lightning_button.clicked == True:
+                fireball_button.clicked = False
+            ice_button.clicked = False
+            lightning_button.clicked = False
+            sword_button.clicked = False
+            fireball_button.image = active_fireball_icon
+            if person.rect.collidepoint(pos):
+                pygame.mouse.set_visible(False)
+                screen.blit(active_fireball_icon, pos)
+                if clicked == True:
+                    fire_magic = True
+                    target = aux[i]
+
+        if ice_button.clicked == True:
+            if lightning_button.clicked == True:
+                ice_button.clicked = False
+            sword_button.clicked = False
+            fireball_button.clicked = False
+            lightning_button.clicked = False
+            ice_button.image = active_ice_icon
+            if person.rect.collidepoint(pos):
+                pygame.mouse.set_visible(False)
+                screen.blit(active_ice_icon, pos)
+                if clicked == True:
+                    ice_magic = True
+                    target = aux[i]
+
+        if lightning_button.clicked == True:
+            sword_button.clicked = False
+            fireball_button.clicked = False
+            ice_button.clicked = False
+            lightning_button.image = active_lightning_icon
+            if person.rect.collidepoint(pos):
+                pygame.mouse.set_visible(False)
+                screen.blit(active_lightning_icon, pos)
+                if clicked == True:
+                    lightning_magic = True
+                    target = aux[i]
+    else:
+        pass
+
+# Função que percorre os leveis da Heap    
+def turnLevel(percorreHeap):
+    pass
+
+#coloca os inimigos em uma lista 
+enemy_list = Queue()
+enemy_alive = 0
+enemy_list.enqueue(Skelleton1)
+enemy_alive += 1
+total_fighters +=1
+enemy_list.enqueue(Zombie2)
+enemy_alive += 1
+total_fighters +=1
 
 while run == True:
     clock.tick(FPS) #limita o fps para o colocado em settings
