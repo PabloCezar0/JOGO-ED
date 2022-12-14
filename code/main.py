@@ -110,10 +110,9 @@ def draw_panelEnemy(aux):
 
 #criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
 Slime = character.Character(140,370,1,'Slime',100,100,5,100,10,0,10,2,2,1,8,0)
-Zombie1 = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,50,1,0,0,1,7,1)
-Zombie2 = character.Character(500,385,5 ,'Zombie',50,0,10,0,3,2,1,0,0,1,7,1)
-Skelleton1 = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,50,1,0,0,1,18,1)
-Skelleton2 = character.Character(500,360,5 ,'Skelleton',50,0,5,0,3,50,1,0,0,1,18,1)
+Zombie = character.Character(700,385,5 ,'Zombie',50,0,10,0,3,50,1,0,0,1,7,1)
+Skelleton = character.Character(700,360,5 ,'Skelleton',50,0,10,0,3,50,1,0,0,1,18,1)
+
 
 
 
@@ -127,9 +126,10 @@ Lich = character.Character(600,200,6 ,'Lich',50,50,10,0,3,50,1,0,0,1,18,1)
 #coloca os inimigos em uma lista 
 enemy_list = Queue()
 enemy_alive = 0
-enemy_list.enqueue(Lich)
+enemy_list.enqueue(Skelleton)
 enemy_alive += 1
 total_fighters +=1
+
 
     
 
