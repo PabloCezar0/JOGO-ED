@@ -151,8 +151,10 @@ print(percorreHeap)
 def runHeap(heap, level, side):
     if side == "left":
         level = heap.leftChildIndex(level)
+        return level
     else:
         level = heap.rightChildIndex(level)
+        return level
 
 # Função que percorre os leveis da Heap    
 def turnLevel(Heap, Slime, Queue, level):
@@ -462,11 +464,11 @@ while run == True:
             right_button.clicked = False
             if left_button.draw():
                 print("entleft")
-                runHeap(percorreHeap, level, "left")
+                level = runHeap(percorreHeap, level, "left")
                 level_over = 0
                 
-            elif right_button.draw():
-                runHeap(percorreHeap, level, "right")
+            if right_button.draw():
+                level = runHeap(percorreHeap, level, "right")
 
             turnLevel(percorreHeap, Slime, character_list, level)
 
