@@ -64,6 +64,7 @@ clicked = False
 heal = 0
 heal_mp = 0
 next_turn = 0
+turns = 0
 
 font = pygame.font.SysFont('Times New Roman', 18)#fonte
 
@@ -168,6 +169,7 @@ def turnAtack(person, turns):
     global action_cd
     global action_wait
     global next_turn
+    global turns
     attack = False
     magic = random.randint(0,5)
     potion = False
@@ -238,36 +240,37 @@ def turnAtack(person, turns):
                     
                 if person.head.data.hp > 50 and person.head.data.hp != person.head.data.max_hp and potion == False:
                     person.head.data.hp += person.head.data.max_hp - person.head.data.hp
-                    heal = person.head.data.max_hp - person.head.data.hp
-                    drawn_text('{heal}', font, red, 240, 250)
                     potion = True
                     person.head.data.hp_potions -= 1
+                    potion_button.clicked = False
 
-                if person.head.data.hp <= 50 and potion == False:
+
+                if person.head.data.hp <= 50 and potion == False and person.head.data.hp != 100:
                     drawn_text('+50', font, red, 240, 250)    
                     person.head.data.hp += 50
                     potion = True
-                    potion -= 1
+                    person.head.data.hp_potions -= 1
                     potion_button.clicked = False
 
         if mp_button.clicked == True and potion == False and Slime.mp_potions > 0 :#controla as pocoes, impede o usuario de usar pocao com mp maximo e impede o hp com a cura passar do mp maximo
 
             if person.head.data.mp == person.head.data.max_mp and potion == False:
                 drawn_text('Mana Full', font, blue, 240, 250)
-
-            if person.head.data.mp <= 50 and potion == False:  
+                    
+            if person.head.data.mp > 50 and person.head.data.mp != 100 and potion == False:
+                person.head.data.mp += person.head.data.max_mp - person.head.data.mp
+                potion = True
+                person.head.data.mp_potions -= 1
+                mp_button.clicked = False
+                print('pocao 1')
+            
+            if person.head.data.mp <= 50 and potion == False and person.head.data.mp != 100:  
                 drawn_text('+50', font, blue, 240, 250)  
                 person.head.data.mp += 50
                 potion = True            
                 person.head.data.mp_potions -= 1
-                    
-            if person.head.data.mp > 50 and person.head.data.mp != 100 and potion == False:
-                person.head.data.mp += person.head.data.max_mp - person.head.data.mp
-                heal_mp = person.head.data.max_mp - person.head.data.mp
-                drawn_text('{heal_mp}', font, blue, 240, 250)
-                potion = True
-                person.head.data.mp_potions -= 1
                 mp_button.clicked = False
+                print('pocao 2')
                     
         
             #acao do jogador se o slime tiver vivo ele comeca fighter 1 eh slime 2 eh o inimigo 1 e o 3 inimigo 2
@@ -345,6 +348,7 @@ def turnAtack(person, turns):
                 drawn_text('No mana', font, blue, 240, 250)  
 
         if next_turn == 1:
+            turns += 1
             aux = person.dequeue()
             person.enqueue(aux)
             print(person.head.data.name)
@@ -436,6 +440,7 @@ while run == True:
     # todos fazem a mesma coisa, ao clicar em algum botao de ataque e colocar o mouse em cima do inimigo o cursos muda para o do icone de ataque ativo selecionado
 
         if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
+            print(turns)
 
             turnAtack(character_list, turns)
 
@@ -446,10 +451,19 @@ while run == True:
                 level_over = -1          
 
             if character_list.head.data.name != 'Slime' and character_list.head.data.hp <= 0:
+                action_wait = 4000
+                action_cd = 0
+                turns = 0
                 level_over = 1 
+                
 
             if character_list.tail.data.name != 'Slime' and character_list.tail.data.hp <= 0:
+                action_wait = 4000
+                action_cd = 0
+                turns = 0
                 level_over = 1      
+
+            
 
         #faz as imagens serem as padroes apos ataque
         if sword_button.clicked == False:
@@ -463,7 +477,16 @@ while run == True:
 
 #check para vitoria 
         if level_over == 1:
-            action_wait = 0
+            
+            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
+                print(action_cd, action_wait)
+                if action_cd >= action_wait: 
+                    game_win = 1 
+                action_cd += 1
+            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
+                if action_cd >= action_wait: 
+                    game_win = 1 
+                action_cd += 1
             screen.blit(victory_icon, (250,0))
             left_button.clicked = False
             right_button.clicked = False
@@ -485,6 +508,7 @@ while run == True:
             fireball_button.clicked = False
             ice_button.clicked = False
             lightning_button.clicked = False
+            action_cd += 1
         
 #derrota
         if level_over == -1:
