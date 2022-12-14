@@ -66,6 +66,7 @@ level_over = 0 #1 acaba o level e manda para o proximo no
 game_win = 0 # 1 o jogo vence -1 game over
 heal = 0
 heal_mp = 0
+enemy_magic = 0
 
 
 
@@ -134,6 +135,25 @@ percorreHeap.insert(Zombie1)
 percorreHeap.insert(Zombie2)
 percorreHeap.insert(Skelleton1)
 percorreHeap.insert(Skelleton2)
+
+#Bosses
+Demon = character.Character(500,130,4 ,'Demon of Fire',50,50,10,0,3,50,1,0,0,1,22,1)
+Lich = character.Character(600,200,6 ,'Lich',50,50,10,0,3,50,1,0,0,1,18,1)
+
+
+# Cria a árvore min-Heap
+percorreHeap = MinHeap(15)
+
+percorreHeap.insert(Zombie1)
+percorreHeap.insert(Zombie2)
+percorreHeap.insert(Skelleton1)
+percorreHeap.insert(Skelleton2)
+
+#Bosses
+Demon = character.Character(500,130,4 ,'Demon of Fire',50,50,10,0,3,50,1,0,0,1,22,1)
+Lich = character.Character(600,200,6 ,'Lich',50,50,10,0,3,50,1,0,0,1,18,1)
+
+
 
 
 #Função que cria o turno da fase
@@ -211,12 +231,10 @@ def turnLevel(percorreHeap):
 #coloca os inimigos em uma lista 
 enemy_list = Queue()
 enemy_alive = 0
-enemy_list.enqueue(Skelleton1)
+enemy_list.enqueue(Lich)
 enemy_alive += 1
 total_fighters +=1
-enemy_list.enqueue(Zombie2)
-enemy_alive += 1
-total_fighters +=1
+
 
 while run == True:
     clock.tick(FPS) #limita o fps para o colocado em settings
@@ -384,6 +402,9 @@ while run == True:
                                     potion_button.clicked = False
                                     mp_button.clicked = False
                                     action_wait = wait_time
+                                    if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
 
                         if fire_magic == True and target.alive == True: #controla o ataque de fogo
                             if Slime.mp >= 15: #so executa o ataque se mana for maior que 15
@@ -400,6 +421,9 @@ while run == True:
                                         mp_button.clicked = False
                                         fire_magic = False
                                         action_wait = wait_time
+                                        if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
                             else:
                                 drawn_text('No mana', font, blue, 240, 250) 
 
@@ -418,6 +442,9 @@ while run == True:
                                         mp_button.clicked = False
                                         ice_magic = False
                                         action_wait = wait_time
+                                        if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
                             else:
                                 drawn_text('No mana', font, blue, 240, 250) 
 
@@ -437,6 +464,9 @@ while run == True:
                                         mp_button.clicked = False
                                         lightning_magic = False
                                         action_wait = wait_time
+                                        if target.hp == 0:
+                                            target.alive = False
+                                            enemy_alive -= 1
                             else:
                                  drawn_text('No mana', font, blue, 240, 250)  
 
@@ -450,26 +480,52 @@ while run == True:
                 for count, enemy in enumerate(aux): #controla o ataque do inimigo o target sempre eh o slime
                     if current_fighter == 2 + count:
                         if enemy.alive == True:
-                            action_cd += 1
-                            if action_cd >= action_wait:
-                                #attack
-                                enemy.attack(Slime)
-                                current_fighter += 1
-                                action_cd = 0
-                                time.sleep(0.08)
+
+                            if enemy == Lich and enemy.mp < 30  or enemy == Demon and enemy_magic < 15 or enemy_magic == 1:
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    enemy.attack(Slime)
+                                    enemy_magic = 0
+                                    current_fighter += 1
+                                    action_cd = 0
+                                    time.sleep(0.08)
+
+                            if enemy == Lich and enemy.mp >= 30 and enemy_magic == 0:
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    enemy.death_magic(Slime)
+                                    enemy_magic = 1
+                                    current_fighter += 1
+                                    action_cd = 0
+                                    time.sleep(0.08)
+
+                            if enemy == Demon and enemy.mp >= 15 and enemy_magic == 0:
+                                action_cd += 1
+                                if action_cd >= action_wait:
+                                    #attack
+                                    enemy.fire(Slime)
+                                    enemy_magic = 1
+                                    current_fighter += 1
+                                    action_cd = 0
+                                    time.sleep(0.08)
+
+                            
                         else:
                             current_fighter += 1
                 
                 #reseta o turno para o protagonista
                 if current_fighter > total_fighters :
                     current_fighter = 1
-
+                
                 if enemy.alive == False in aux:
                         enemy_alive -= 1
 
                 if enemy_alive == 0:
                     level_over = 1
 
+                print(enemy_alive)
 
         #faz as imagens serem as padroes apos ataque
         if sword_button.clicked == False:
@@ -492,6 +548,7 @@ while run == True:
                 Slime.reset()
                 for enemy in aux:
                     enemy.reset()
+                    enemy_alive += 1
                 current_fighter = 1
                 level_over = 0
                 sword_button.clicked = False
