@@ -158,6 +158,8 @@ def runHeap(heap, level, side):
 
 # Função que percorre os leveis da Heap    
 def turnLevel(Heap, Slime, Queue, level):
+    Queue.dequeue()
+    Queue.dequeue()
     Queue.enqueue(Slime)
     Queue.enqueue(Heap.storage[level])
 
@@ -244,36 +246,37 @@ def turnAtack(person):
                     
                 if person.head.data.hp > 50 and person.head.data.hp != person.head.data.max_hp and potion == False:
                     person.head.data.hp += person.head.data.max_hp - person.head.data.hp
-                    heal = person.head.data.max_hp - person.head.data.hp
-                    drawn_text('{heal}', font, red, 240, 250)
                     potion = True
                     person.head.data.hp_potions -= 1
+                    potion_button.clicked = False
 
-                if person.head.data.hp <= 50 and potion == False:
+
+                if person.head.data.hp <= 50 and potion == False and person.head.data.hp != 100:
                     drawn_text('+50', font, red, 240, 250)    
                     person.head.data.hp += 50
                     potion = True
-                    potion -= 1
+                    person.head.data.hp_potions -= 1
                     potion_button.clicked = False
 
         if mp_button.clicked == True and potion == False and Slime.mp_potions > 0 :#controla as pocoes, impede o usuario de usar pocao com mp maximo e impede o hp com a cura passar do mp maximo
 
             if person.head.data.mp == person.head.data.max_mp and potion == False:
                 drawn_text('Mana Full', font, blue, 240, 250)
-
-            if person.head.data.mp <= 50 and potion == False:  
+                    
+            if person.head.data.mp > 50 and person.head.data.mp != 100 and potion == False:
+                person.head.data.mp += person.head.data.max_mp - person.head.data.mp
+                potion = True
+                person.head.data.mp_potions -= 1
+                mp_button.clicked = False
+                print('pocao 1')
+            
+            if person.head.data.mp <= 50 and potion == False and person.head.data.mp != 100:  
                 drawn_text('+50', font, blue, 240, 250)  
                 person.head.data.mp += 50
                 potion = True            
                 person.head.data.mp_potions -= 1
-                    
-            if person.head.data.mp > 50 and person.head.data.mp != 100 and potion == False:
-                person.head.data.mp += person.head.data.max_mp - person.head.data.mp
-                heal_mp = person.head.data.max_mp - person.head.data.mp
-                drawn_text('{heal_mp}', font, blue, 240, 250)
-                potion = True
-                person.head.data.mp_potions -= 1
                 mp_button.clicked = False
+                print('pocao 2')
                     
         
             #acao do jogador se o slime tiver vivo ele comeca fighter 1 eh slime 2 eh o inimigo 1 e o 3 inimigo 2
