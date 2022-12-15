@@ -68,7 +68,11 @@ class MinHeap:
             smallerChildIndex = self.leftChildIndex(index)
             if self.hasRight(index) and self.rightChild(index).level < self.leftChild(index).level:
                 smallerChildIndex = self.rightChildIndex(index)
+<<<<<<< Updated upstream
             if self.storage[index].level < self.storage[smallerChildIndex]:
+=======
+            if self.storage[index].level < self.storage[smallerChildIndex].level:
+>>>>>>> Stashed changes
                 break
             else:
                 self.swap(index, smallerChildIndex)

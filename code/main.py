@@ -8,7 +8,7 @@ from fila import Queue
 from heap import MinHeap
 from credits import Credits
 import random
-
+from credits import Credits
 
 
 #teste5
@@ -58,20 +58,28 @@ current_fighter = 1 #lutador 1 protagonista
 level_over = 0 #1 acaba o level e manda para o proximo no
 game_win = 0 # 1 o jogo vence -1 game over
 action_cd = 0
-wait_time = 4000
+wait_time = 1200
 action_wait = wait_time
 clicked = False
 heal = 0
 heal_mp = 0
 next_turn = 0
-turns = 0
+turns = 1
+turn_end = 0
+pontuationTurn = 0
+level_pontuation = []
+next_level = 0
 
 font = pygame.font.SysFont('Times New Roman', 18)#fonte
+end_font = pygame.font.SysFont('Times New Roman', 30)#fonte
+win_font = pygame.font.SysFont('Times New Roman', 60)#fonte
 
 #RGG
 red = (255,0,0)
 green = (0,255,0)
 blue = (0,0,255)
+black = (0,0,0)
+wine = (255,50,50)
 
 #background
 def draw_bg():
@@ -88,19 +96,21 @@ def drawn_text(text, font, text_col, x,y):
 #paineis para se colocara vida e pocoes
 def draw_panelSlime():
         screen.blit(slime_panel_img, (0,450))
-        drawn_text(f'{Slime.name} HP: {Slime.hp}', font, red, 100, 230)
-        drawn_text(f'{Slime.name} MP: {Slime.mp}', font, blue, 100, 250)
-        drawn_text(f'{Slime.hp_potions}', font, red, 40, 580)
-        drawn_text(f'{Slime.mp_potions}', font, blue, 80, 580)
+        drawn_text(f'{Slime.name} HP: {Slime.hp}', font, red, 85, 320)
+        drawn_text(f'{Slime.name} MP: {Slime.mp}', font, blue, 85, 350)
+        drawn_text(f'{Slime.hp_potions}', font, red, 40, 570)
+        drawn_text(f'{Slime.mp_potions}', font, blue, 80, 570)
 
 #painel com vida e mana dos inimigos
 def draw_panelEnemy(aux):
     if aux.head.data.name != 'Slime':
         screen.blit(enemy_panel_img, (450,450))
+        drawn_text(f'{aux.head.data.name} Level: {aux.head.data.level}', font, black, 550 , 375 + 80 )
         drawn_text(f'{aux.head.data.name} HP: {aux.head.data.hp}', font, red, 550 , 400 + 80 )
         drawn_text(f'{aux.head.data.name} MP: {aux.head.data.mp}', font, blue, 550, 430 + 80 )
     if aux.tail.data.name != 'Slime':
         screen.blit(enemy_panel_img, (450,450))
+        drawn_text(f'{aux.tail.data.name} Level: {aux.tail.data.level}', font, black, 550 , 375 + 80 )
         drawn_text(f'{aux.tail.data.name} HP: {aux.tail.data.hp}', font, red, 550 , 400 + 80 )
         drawn_text(f'{aux.tail.data.name} MP: {aux.tail.data.mp}', font, blue, 550, 430 + 80 )
 
@@ -119,26 +129,56 @@ right_button = buttons.Button(screen, 500,100, right_icon, 80, 28)
 #criar inimigos              x  y scale name hp mp str mgc agi def mdef hpP mpP level frame weak
 Slime = character.Character(140,370,1,'Slime',100,100,10,100,10,10,10,2,2,1,8,0)
 enemyList = [0]*4
+<<<<<<< Updated upstream
 enemyList[0] = character.Character(700,385,5 ,'Zombie',5,0,10,0,3,0,1,0,0,1,7,1)
 enemyList[1] = character.Character(700,385,5 ,'Zombie',6,0,10,0,4,2,1,0,0,2,7,1)
 enemyList[2] = character.Character(700,360,5 ,'Skelleton',5,0,10,0,3,0,1,0,0,1,18,1)
 enemyList[3] = character.Character(700,360,5 ,'Skelleton',6,0,5,0,3,50,1,0,0,2,18,1)
+=======
+enemyList[0] = character.Character(600,385,5 ,'Zombie',50,0,10,0,3,0,1,0,0,1,7,1)
+enemyList[1] = character.Character(600,385,5 ,'Zombie',60,0,10,0,4,2,1,0,0,2,7,1)
+enemyList[2] = character.Character(600,360,5 ,'Skelleton',50,0,10,0,3,0,1,0,0,1,18,1)
+enemyList[3] = character.Character(600,360,5 ,'Skelleton',60,0,5,0,3,50,1,0,0,2,18,1)
+>>>>>>> Stashed changes
 
 #Bosses
 bossList = [0]*4
-bossList[0] = character.Character(500,130,4 ,'Demon of Fire',80,50,10,0,3,50,1,0,0,5,22,1)
-bossList[1] = character.Character(500,130,4 ,'Demon of Fire',95,50,10,0,3,50,1,0,0,6,22,1)
-bossList[2] = character.Character(600,200,6 ,'Lich',80,100,10,0,3,50,1,0,0,5,18,1)
-bossList[3] = character.Character(600,200,6 ,'Lich',95,100,10,0,3,50,1,0,0,6,18,1)
+bossList[0] = character.Character(500,130,4 ,'Demon of Fire',80,50,25,0,3,50,1,0,0,5,22,1)
+bossList[1] = character.Character(500,130,4 ,'Demon of Fire',95,50,25,0,3,50,1,0,0,6,22,1)
+bossList[2] = character.Character(600,200,6 ,'Lich',80,100,10,30,3,50,1,0,0,5,18,1)
+bossList[3] = character.Character(600,200,6 ,'Lich',95,100,10,30,3,50,1,0,0,6,18,1)
 
+<<<<<<< Updated upstream
+=======
+# Cria a árvore min-Heap
+gameHeap = MinHeap(15)
+
+for i in range(0,7):
+    gameHeap.insert(random.choice(enemyList))
+
+for i in range(0,8):
+    gameHeap.insert(random.choice(bossList))
+
+print(gameHeap)
+
+
+pontuationHeap = MinHeap(4)
+
+
+>>>>>>> Stashed changes
 #Função que percorre a Heap
 
-def runHeap(heap, level, side):
-    if side == "left":
-        level = heap.leftChildIndex(level)
+def runHeap(heap, level, side, next):
+    print(level)
+    if side == 'left' and next == 1:
+        next = 0
+        level = heap.leftChildIndex(level)   
+        print(level)
         return level
-    else:
+    if side == 'right' and next == 1:
+        next = 0
         level = heap.rightChildIndex(level)
+        print(level)
         return level
 
 # Função que percorre os leveis da Heap    
@@ -162,21 +202,27 @@ def pontuation(hp, turns, level):
     points = hp+(turns*level)
     return points
 
-
+def pontuation(hp, turns, level):
+    points = (hp+level)
+    return points
+ 
 # Função que aciona os ataques
 def turnAtack(person, turns):
     global wait_time
     global action_cd
     global action_wait
     global next_turn
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     attack = False
     magic = random.randint(0,5)
     potion = False
     fire_magic = False
     ice_magic = False
     lightning_magic = False
-    aux = None
+
 
     if person.head.data.name == 'Slime':
         if sword_button.clicked == True:
@@ -262,7 +308,7 @@ def turnAtack(person, turns):
                 potion = True
                 person.head.data.mp_potions -= 1
                 mp_button.clicked = False
-                print('pocao 1')
+    
             
             if person.head.data.mp <= 50 and potion == False and person.head.data.mp != 100:  
                 drawn_text('+50', font, blue, 240, 250)  
@@ -270,7 +316,7 @@ def turnAtack(person, turns):
                 potion = True            
                 person.head.data.mp_potions -= 1
                 mp_button.clicked = False
-                print('pocao 2')
+     
                     
         
             #acao do jogador se o slime tiver vivo ele comeca fighter 1 eh slime 2 eh o inimigo 1 e o 3 inimigo 2
@@ -286,7 +332,13 @@ def turnAtack(person, turns):
                 mp_button.clicked = False
                 if person.tail.data.hp == 0:
                     person.tail.data.alive = False
+<<<<<<< Updated upstream
                 
+=======
+                else:
+                    turns += 1
+                    turnQueue(person, turns)
+>>>>>>> Stashed changes
 
 
 
@@ -300,9 +352,14 @@ def turnAtack(person, turns):
                     potion_button.clicked = False
                     mp_button.clicked = False
                     fire_magic = False
-                    action_wait = wait_time
                     if person.tail.data.hp == 0:
                         person.tail.data.alive = False
+<<<<<<< Updated upstream
+=======
+                    else:
+                        turns += 1
+                        turnQueue(person, turns)
+>>>>>>> Stashed changes
 
 
             else:
@@ -318,10 +375,15 @@ def turnAtack(person, turns):
                     potion_button.clicked = False
                     mp_button.clicked = False
                     ice_magic = False
-                    action_wait = wait_time
                     if person.tail.data.hp == 0:
                         person.tail.data.alive = False
+<<<<<<< Updated upstream
                     
+=======
+                    else:
+                        turns += 1
+                        turnQueue(person, turns)
+>>>>>>> Stashed changes
 
 
             else:
@@ -340,15 +402,31 @@ def turnAtack(person, turns):
                     lightning_magic = False
                     if person.tail.data.hp == 0:
                         person.tail.data.alive = False
+<<<<<<< Updated upstream
+=======
+                    else:
+                        turns += 1
+                        turnQueue(person, turns)
+>>>>>>> Stashed changes
                     
 
  
             else:
                 drawn_text('No mana', font, blue, 240, 250)  
+        action_cd = 0
+        
 
+<<<<<<< Updated upstream
+=======
+        
+
+>>>>>>> Stashed changes
     if person.head.data.name != 'Slime':
+        
+        
         action_cd += 1
         if action_cd >= action_wait:
+
 
             if person.head.data.name == 'Lich' and person.head.data.mp < 30  or person.head.data.name == 'Demon' and person.head.data.mp < 15 or magic == 5:
 
@@ -357,21 +435,31 @@ def turnAtack(person, turns):
                     #attack
                     person.head.data.death_magic(person.tail.data)
                     time.sleep(0.08)
+                    
 
                 if person.head.data.name == 'Demon' and person.head.data.mp >= 15 and magic == 5:
                     #attack
                     person.head.data.fire(person.tail.data)
                     time.sleep(0.08)
+                    
                 else:
                     person.head.data.attack(person.tail.data)
                     time.sleep (0.08)
+                    
 
             else:
                 person.head.data.attack(person.tail.data)
                 time.sleep (0.08)
+                
+            turnQueue(person, turns)
+ 
             
+<<<<<<< Updated upstream
             turnQueue(person, turns)
             action_cd = 0
+=======
+        
+>>>>>>> Stashed changes
 
 # Cria a árvore min-Heap
 gameHeap = MinHeap(15)
@@ -391,13 +479,17 @@ print(gameHeap)
 character_list = Queue()
 enemy_alive = 0
 level = 0
+<<<<<<< Updated upstream
 turns = 0
+=======
+>>>>>>> Stashed changes
 turnLevel(gameHeap, Slime, character_list, level)
 enemy_alive += 1
 
 while run == True:
     clock.tick(FPS) #limita o fps para o colocado em settings
-
+    
+    next_level = 0
     while game_win == 0 and run == True:
         draw_bg() #mostra background na tela
         draw_panelSlime() #mostra o painel do pc
@@ -431,6 +523,10 @@ while run == True:
     # todos fazem a mesma coisa, ao clicar em algum botao de ataque e colocar o mouse em cima do inimigo o cursos muda para o do icone de ataque ativo selecionado
 
         if level_over == 0: # se o jogo nao tiver ganho roda o codigo abaixo
+<<<<<<< Updated upstream
+=======
+  
+>>>>>>> Stashed changes
 
             turnAtack(character_list, turns)
 
@@ -441,15 +537,24 @@ while run == True:
                 level_over = -1          
 
             if character_list.head.data.name != 'Slime' and character_list.head.data.hp <= 0:
-                action_wait = 4000
                 action_cd = 0
+<<<<<<< Updated upstream
+=======
+                next_level = 1
+>>>>>>> Stashed changes
                 level_over = 1 
+                turn_end = 1
                 
 
             if character_list.tail.data.name != 'Slime' and character_list.tail.data.hp <= 0:
-                action_wait = 4000
                 action_cd = 0
+<<<<<<< Updated upstream
                 level_over = 1      
+=======
+                next_level = 1
+                level_over = 1     
+                turn_end = 1 
+>>>>>>> Stashed changes
 
             
 
@@ -466,18 +571,11 @@ while run == True:
 #check para vitoria 
         if level_over == 1:
             
-            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
-                print(action_cd, action_wait)
-                if action_cd >= action_wait: 
-                    game_win = 1 
-                action_cd += 1
-            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
-                if action_cd >= action_wait: 
-                    game_win = 1 
-                action_cd += 1
+
             screen.blit(victory_icon, (250,0))
             left_button.clicked = False
             right_button.clicked = False
+<<<<<<< Updated upstream
             if left_button.draw():
                 print("entleft")
                 level = runHeap(gameHeap, level, "left")
@@ -490,6 +588,46 @@ while run == True:
             auxPoint = Credits(character_list.tail, pontuation)
             pontuationHeap.insert(auxPoint)
             turnLevel(gameHeap, Slime, character_list, level)
+=======
+            if character_list.tail.data.name != 'Demon of Fire' and character_list.tail.data.name != 'Lich' :
+                if left_button.draw():
+                    left_button.clicked = False
+                    Slime.reset()
+                    character_list.tail.data.reset()
+                    level_over = 0
+                    level = runHeap(gameHeap, level, 'left', next_level)
+                    turnLevel(gameHeap, Slime, character_list, level)
+                    
+                if right_button.draw():
+                    right_button.clicked = False
+                    Slime.reset()
+                    character_list.tail.data.reset()
+                    level_over = 0
+                    level = runHeap(gameHeap, level, 'right', next_level)    
+                    turnLevel(gameHeap, Slime, character_list, level)
+
+            if (turn_end == 1):
+                turn_end = 0
+                pontuationTurn = pontuation(character_list.head.data.hp, turns, character_list.tail.data.level)
+                auxPoint = Credits(character_list.tail, pontuationTurn)
+                pontuationHeap.insert(auxPoint)
+
+            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
+                if action_cd >= 7000: 
+                    game_win = 1 
+                action_cd += 1
+                while pontuationHeap.size != 0:           
+                    level_pontuation.append(pontuationHeap.remove())
+    
+
+
+            if character_list.tail.data.name == 'Demon of Fire' or character_list.tail.data.name == 'Lich' :
+                if action_cd >= 7000: 
+                    game_win = 1 
+                action_cd += 1
+                while pontuationHeap.size != 0:           
+                    level_pontuation.append(pontuationHeap.remove())
+>>>>>>> Stashed changes
 
             turns = 0
             sword_button.clicked = False
@@ -497,14 +635,16 @@ while run == True:
             ice_button.clicked = False
             lightning_button.clicked = False
             action_cd += 1
+            
+ 
         
 #derrota
         if level_over == -1:
             restart_button.clicked = False
             screen.blit(defeat_icon, (250,0))
             if restart_button.draw():
-                character_list.head.reset()
-                character_list.tail.reset()
+                character_list.head.data.reset()
+                character_list.tail.data.reset()
                 current_fighter = 1
                 level_over = 0
             sword_button.clicked = False
@@ -523,6 +663,14 @@ while run == True:
 
     while game_win == 1:
         draw_win()
+        drawn_text('Scores', win_font, wine, 250, 130)
+        for i, point in enumerate(level_pontuation):
+            drawn_text(f'{point.enemyName}, Level: {point.level}  Score: {point.pontuation}', end_font, black, 250 , 200+(i*80))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.display.quit() 
+                pygame.quit()
+                exit()
         pygame.display.update() 
 
 pygame.quit()

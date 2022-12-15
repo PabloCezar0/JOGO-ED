@@ -2,7 +2,7 @@
 
 WIDHT = 800 #pode modificar caso ocorra algum erro
 HEIGHT = 600
-FPS = 30
+FPS = 60
 TILESIZE = 64           
 
 
